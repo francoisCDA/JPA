@@ -40,7 +40,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Tâche " +
+        return "\tTâche " +
                 "id : " + id +
                 ", '" + aFaire + '\'' +
                 ", " + (complete ? "terminée" : "à finir") +

@@ -38,6 +38,8 @@ public class TodoService {
         return todoDao.removeTask(id);
     }
 
-
+    public void closeEmf(){
+        todoDao.close();
+    }
 
 }

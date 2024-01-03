@@ -44,10 +44,12 @@ public class ConsoleIHM {
                 case "3" -> completeTask();
                 case "4" -> deleteTask();
                 case "0" -> run = false;
-                default -> System.out.printf("pas compris");
+                default -> System.out.println("pas compris");
             }
 
         }
+
+        todoService.closeEmf();
 
     }
 
@@ -55,7 +57,7 @@ public class ConsoleIHM {
         String task;
 
         System.out.println("Quelle est la nouvelle tâche ?");
-        System.out.print("\n\t>");
+        System.out.print("\n\t> ");
 
         task = scan.nextLine();
 
@@ -77,7 +79,7 @@ public class ConsoleIHM {
 
     private void completeTask() {
 
-        System.out.println("Terminer une tâche");
+        System.out.println("Terminer une tâche\n");
 
         List<Task> tasks = todoService.getActiveTask();
         String target;
@@ -87,14 +89,17 @@ public class ConsoleIHM {
             System.out.println(t);
         }
 
-        System.out.println("Indiquer la tâche à terminer :");
+        System.out.println("\nIndiquer l'id de la tâche à terminer :");
+        System.out.printf("O pour annuler");
 
-        System.out.print("\n\t>");
+        System.out.print("\n\t> ");
 
         target = scan.nextLine();
 
         try {
             id = parseLong(target);
+
+            if (id == 0) return;
 
             if (todoService.completTask(id)){
                 System.out.println("tâche compétée");
@@ -107,7 +112,7 @@ public class ConsoleIHM {
     }
 
     private void deleteTask() {
-        System.out.println("Supprimer une tâche");
+        System.out.println("Supprimer une tâche\n");
 
         List<Task> tasks = todoService.getCompletedTask();
         String target;
@@ -117,14 +122,17 @@ public class ConsoleIHM {
             System.out.println(t);
         }
 
-        System.out.println("Indiquer la tâche à supprimer :");
+        System.out.println("\nIndiquer la tâche à supprimer :");
+        System.out.printf("O pour annuler");
 
-        System.out.print("\n\t>");
+        System.out.print("\n\t> ");
 
         target = scan.nextLine();
 
         try {
             id = parseLong(target);
+
+            if (id == 0) return;
 
             if (todoService.removeTask(id)){
                 System.out.println("tâche supprimée");

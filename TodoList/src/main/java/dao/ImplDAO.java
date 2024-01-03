@@ -103,4 +103,8 @@ public class ImplDAO extends TodoDAO{
         }
 
     }
+
+    public void close(){
+        emf.close();
+    }
 }
