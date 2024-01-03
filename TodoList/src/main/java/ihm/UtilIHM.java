@@ -2,12 +2,14 @@ package ihm;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
 
 public class UtilIHM {
 
@@ -35,6 +37,21 @@ public class UtilIHM {
         return retour;
     }
 
+    public static Long inputLong(String label) throws Exception {
+
+        String saisie = inputText(label);
+        Long retour ;
+
+        try {
+            retour = parseLong(saisie) ;
+        } catch (Exception e) {
+            throw new Exception("NaN");
+        }
+
+        return retour;
+    }
+
+
     public static LocalDate inputDate(String label) {
 
         boolean valide = false;
@@ -46,7 +63,7 @@ public class UtilIHM {
             input = inputText(label);
 
             try {
-                ret = LocalDate.parse(input);
+                ret = LocalDate.parse(input); // format date attendu YYYY-MM-JJ
 
                 valide = true;
 
@@ -166,6 +183,18 @@ public class UtilIHM {
             return 0;
         }
 
+    }
+
+
+    public static <E extends Enum<E>> String[] parseEnumToStringTable(Class<E> monEnum){
+
+        ArrayList<String> ret = new ArrayList<>();
+
+        for (E type: monEnum.getEnumConstants()) {
+            ret.add(type.name());
+        }
+
+        return ret.toArray(new String[0]);
     }
 
 

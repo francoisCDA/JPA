@@ -48,10 +48,13 @@ public class Task {
 
     @Override
     public String toString() {
-        return "\tTâche " +
+        return "\t-> " +
                 "id : " + id +
                 ", '" + aFaire + '\'' +
                 ", " + (complete ? "terminée" : "à finir") +
+                ", échéance : " + infoTache.getEcheance() +
+                ", priorité : " + infoTache.getPriorite() +
+                ", détails : " + infoTache.getDescription() +
                 '.';
     }
 

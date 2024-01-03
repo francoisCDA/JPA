@@ -14,7 +14,7 @@ public class TodoService {
         todoDao = new ImplDAO();
     }
 
-    public void addTask(String task){
+    public void addTask(Task task){
         todoDao.addTask(task);
     }
 

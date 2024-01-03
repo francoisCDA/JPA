@@ -20,7 +20,9 @@ USE todo_list;
 
 DROP TABLE IF EXISTS todo;
 
-
+select * from todo join todo_info on todo.info_tache_id = todo_info.id_info_tache;
+select * from todo;
+select * from todo_info;
 /*************************************
 		DEMO OneToOne House/adresse
 **************************************/

@@ -7,16 +7,21 @@ import java.util.List;
 
 public class ImplDAO extends TodoDAO{
     @Override
-    public void addTask(String tache) {
+    public void addTask(Task tache) {
         em = emf.createEntityManager();
         em.getTransaction().begin();
 
-        Task newTache = new Task(tache);
-
-        em.persist(newTache);
+        em.persist(tache);
+        em.persist(tache.getInfoTache());
 
         em.getTransaction().commit();
         em.close();
+    }
+
+    @Override
+    public Task getTask(Long id) {
+
+        return null;
 
     }
 
@@ -75,15 +80,27 @@ public class ImplDAO extends TodoDAO{
         Query query = em.createQuery("select t from Task t where id = :id", Task.class);
         query.setParameter("id",idTask);
 
-        Task competedTask = (Task) query.getSingleResult();
+        Task completedTask = null;
 
-        competedTask.completed();
+        try {
+            completedTask = (Task) query.getSingleResult();
+        } catch (Exception ignored) {
+
+        }
+
+
+        if (completedTask == null) {
+            em.getTransaction().rollback();
+            em.close();
+            return false;
+        }
+
+        completedTask.completed();
 
         em.getTransaction().commit();
         em.close();
 
         return true;
-
     }
 
     @Override
@@ -94,6 +111,7 @@ public class ImplDAO extends TodoDAO{
 
         try {
             Task task = em.getReference(Task.class,id);
+            em.remove(task.getInfoTache());
             em.remove(task);
             em.getTransaction().commit();
             return true;
@@ -101,7 +119,6 @@ public class ImplDAO extends TodoDAO{
             em.close();
             return false;
         }
-
     }
 
     public void close(){

@@ -19,7 +19,9 @@ public abstract class TodoDAO {
         emf = Persistence.createEntityManagerFactory("todoList");
     }
 
-    public abstract void addTask(String tache);
+    public abstract void addTask(Task tache);
+
+    public abstract Task getTask(Long id);
 
     public abstract List<Task> getTasks();
 

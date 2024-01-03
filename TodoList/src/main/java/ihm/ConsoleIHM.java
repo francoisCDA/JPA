@@ -15,10 +15,7 @@ import static java.lang.Long.parseLong;
 
 public class ConsoleIHM {
 
-
-
     private TodoService todoService;
-
 
     public ConsoleIHM() {
         todoService = new TodoService();
@@ -31,16 +28,15 @@ public class ConsoleIHM {
         String choix;
 
         while (run) {
-            System.out.println("1 < Ajouter une tâche");
-            System.out.println("2 < Afficher les tâches");
-            System.out.println("3 < Terminer une tâche");
-            System.out.println("4 < Supprimer une tâche");
+            UtilIHM.consoleLi("1 - Ajouter une tâche");
+            UtilIHM.consoleLi("2 - Afficher les tâches");
+            UtilIHM.consoleLi("3 - Terminer une tâche");
+            UtilIHM.consoleLi("4 - Supprimer une tâche");
+            System.out.println();
+            UtilIHM.consoleLi("0 - Quitter l'application");
+            System.out.println();
 
-            System.out.println("0 < Quitter l'application");
-
-            System.out.print("\n\t> ");
-
-            choix = UtilIHM.inputText("choix");
+            choix = UtilIHM.inputText("Choix");
 
             switch (choix) {
                 case "1" -> addTask();
@@ -50,11 +46,8 @@ public class ConsoleIHM {
                 case "0" -> run = false;
                 default -> System.out.println("pas compris");
             }
-
         }
-
         todoService.closeEmf();
-
     }
 
     private void addTask() {
@@ -67,7 +60,7 @@ public class ConsoleIHM {
 
         task = UtilIHM.inputText("Quelle est la nouvelle tâche ?");
 
-        if (task.length() == 0){
+        if (task.isEmpty()){
            UtilIHM.consoleFail("annulation");
            return;
         }
@@ -92,7 +85,7 @@ public class ConsoleIHM {
 
     private void printTasks() {
 
-        System.out.println("\nListe des tâches");
+        UtilIHM.consoleConfirm("Liste des tâches :");
 
         List<Task> tasks = todoService.getTasks() ;
 
@@ -100,11 +93,13 @@ public class ConsoleIHM {
             System.out.println(t);
         }
 
+        System.out.println("\n");
+
     }
 
     private void completeTask() {
 
-        System.out.println("Terminer une tâche\n");
+        UtilIHM.consoleConfirm("Terminer une tâche");
 
         List<Task> tasks = todoService.getActiveTask();
         String target;
@@ -113,13 +108,9 @@ public class ConsoleIHM {
         for (Task t: tasks) {
             System.out.println(t);
         }
+        System.out.println("\n");
 
-        System.out.println("\nIndiquer l'id de la tâche à terminer :");
-        System.out.printf("O pour annuler");
-
-        System.out.print("\n\t> ");
-
-        target = scan.nextLine();
+        target = UtilIHM.inputText("ID de la tâche à annuler (0 pour annuler)");
 
         try {
             id = parseLong(target);
@@ -127,17 +118,20 @@ public class ConsoleIHM {
             if (id == 0) return;
 
             if (todoService.completTask(id)){
-                System.out.println("tâche compétée");
+                UtilIHM.consoleConfirm("tâche compétée");
+            } else {
+                UtilIHM.consoleFail("Suppression impossible");
             }
 
         } catch (NumberFormatException e) {
-            System.out.println(" !!! Erreur de saisie");
+            UtilIHM.consoleError("Erreur de saisie");
         }
 
     }
 
     private void deleteTask() {
-        System.out.println("Supprimer une tâche\n");
+
+        UtilIHM.consoleConfirm("Supprimer une tâche");
 
         List<Task> tasks = todoService.getCompletedTask();
         String target;
@@ -146,13 +140,9 @@ public class ConsoleIHM {
         for (Task t: tasks) {
             System.out.println(t);
         }
+        System.out.println("\n");
 
-        System.out.println("\nIndiquer la tâche à supprimer :");
-        System.out.printf("O pour annuler");
-
-        System.out.print("\n\t> ");
-
-        target = scan.nextLine();
+        target = UtilIHM.inputText("ID de la tâche à supprimer (0 pour annuler)");
 
         try {
             id = parseLong(target);
@@ -160,16 +150,14 @@ public class ConsoleIHM {
             if (id == 0) return;
 
             if (todoService.removeTask(id)){
-                System.out.println("tâche supprimée");
+                UtilIHM.consoleConfirm("tâche supprimée");
             } else {
-                System.out.println(" ! erreur de suppression");
+                UtilIHM.consoleError("Problème à la suppression");
             }
 
         } catch (NumberFormatException e) {
-            System.out.println(" !!! Erreur de saisie");
+            UtilIHM.consoleError("Erreur de saisie");
         }
-
     }
-
 
 }
