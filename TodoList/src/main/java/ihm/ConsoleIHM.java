@@ -1,0 +1,142 @@
+package ihm;
+
+import model.Task;
+import services.TodoService;
+
+import java.util.List;
+import java.util.Scanner;
+
+import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
+
+public class ConsoleIHM {
+
+    private static Scanner scan = new Scanner(System.in);
+
+    private TodoService todoService;
+
+
+    public ConsoleIHM() {
+        todoService = new TodoService();
+    }
+
+
+    public void exe() {
+
+        boolean run = true;
+        String choix;
+
+        while (run) {
+            System.out.println("1 < Ajouter une tâche");
+            System.out.println("2 < Afficher les tâches");
+            System.out.println("3 < Terminer une tâche");
+            System.out.println("4 < Supprimer une tâche");
+
+            System.out.println("0 < Quitter l'application");
+
+            System.out.print("\n\t>");
+
+            choix = scan.nextLine();
+
+            switch (choix) {
+                case "1" -> addTask();
+                case "2" -> printTasks();
+                case "3" -> completeTask();
+                case "4" -> deleteTask();
+                case "0" -> run = false;
+                default -> System.out.printf("pas compris");
+            }
+
+        }
+
+    }
+
+    private void addTask() {
+        String task;
+
+        System.out.println("Quelle est la nouvelle tâche ?");
+        System.out.print("\n\t>");
+
+        task = scan.nextLine();
+
+        todoService.addTask(task);
+
+    }
+
+    private void printTasks() {
+
+        System.out.println("\nListe des tâches");
+
+        List<Task> tasks = todoService.getTasks() ;
+
+        for (Task t: tasks) {
+            System.out.println(t);
+        }
+
+    }
+
+    private void completeTask() {
+
+        System.out.println("Terminer une tâche");
+
+        List<Task> tasks = todoService.getActiveTask();
+        String target;
+        Long id;
+
+        for (Task t: tasks) {
+            System.out.println(t);
+        }
+
+        System.out.println("Indiquer la tâche à terminer :");
+
+        System.out.print("\n\t>");
+
+        target = scan.nextLine();
+
+        try {
+            id = parseLong(target);
+
+            if (todoService.completTask(id)){
+                System.out.println("tâche compétée");
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println(" !!! Erreur de saisie");
+        }
+
+    }
+
+    private void deleteTask() {
+        System.out.println("Supprimer une tâche");
+
+        List<Task> tasks = todoService.getCompletedTask();
+        String target;
+        Long id;
+
+        for (Task t: tasks) {
+            System.out.println(t);
+        }
+
+        System.out.println("Indiquer la tâche à supprimer :");
+
+        System.out.print("\n\t>");
+
+        target = scan.nextLine();
+
+        try {
+            id = parseLong(target);
+
+            if (todoService.removeTask(id)){
+                System.out.println("tâche supprimée");
+            } else {
+                System.out.println(" ! erreur de suppression");
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println(" !!! Erreur de saisie");
+        }
+
+    }
+
+
+}
