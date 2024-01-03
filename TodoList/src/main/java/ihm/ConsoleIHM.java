@@ -1,8 +1,12 @@
 package ihm;
 
+import model.Priorite;
 import model.Task;
+import model.TaskInfo;
 import services.TodoService;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -11,7 +15,7 @@ import static java.lang.Long.parseLong;
 
 public class ConsoleIHM {
 
-    private static Scanner scan = new Scanner(System.in);
+
 
     private TodoService todoService;
 
@@ -34,9 +38,9 @@ public class ConsoleIHM {
 
             System.out.println("0 < Quitter l'application");
 
-            System.out.print("\n\t>");
+            System.out.print("\n\t> ");
 
-            choix = scan.nextLine();
+            choix = UtilIHM.inputText("choix");
 
             switch (choix) {
                 case "1" -> addTask();
@@ -54,16 +58,37 @@ public class ConsoleIHM {
     }
 
     private void addTask() {
-        String task;
+        String task,description;
+        Task tache = null;
+        TaskInfo infoTache = null;
+        LocalDate date;
+        Priorite priorite;
+        int prioritInt;
 
-        System.out.println("Quelle est la nouvelle tâche ?");
-        System.out.print("\n\t> ");
+        task = UtilIHM.inputText("Quelle est la nouvelle tâche ?");
 
-        task = scan.nextLine();
+        if (task.length() == 0){
+           UtilIHM.consoleFail("annulation");
+           return;
+        }
 
-        todoService.addTask(task);
+        tache = new Task(task);
+        infoTache = new TaskInfo();
+
+        infoTache.setDescription(UtilIHM.inputText("Description de la tâche"));
+
+        infoTache.setEcheance(UtilIHM.inputDate("Date d'expiration (YYYY-MM-JJ)"));
+
+        prioritInt = UtilIHM.menu(Priorite.getPriority(),"Priorité de la tâche");
+
+        infoTache.setPriorite(Priorite.getPriority(prioritInt));
+
+        tache.setInfoTache(infoTache);
+
+        todoService.addTask(tache);
 
     }
+
 
     private void printTasks() {
 
