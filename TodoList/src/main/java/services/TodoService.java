@@ -2,8 +2,11 @@ package services;
 
 import dao.ImplDAO;
 import dao.TodoDAO;
+import model.Priorite;
 import model.Task;
+import model.TaskInfo;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class TodoService {
@@ -14,8 +17,19 @@ public class TodoService {
         todoDao = new ImplDAO();
     }
 
-    public void addTask(Task task){
-        todoDao.addTask(task);
+    public boolean addTask(String tache, String description, LocalDate expir, Priorite priorite){
+
+        if (tache.length() == 0 ) return false;
+
+
+        Task newtache = new Task(tache);
+        TaskInfo infoTache = new TaskInfo(description,expir,priorite);
+
+        newtache.setInfoTache(infoTache);
+
+        todoDao.addTask(newtache);
+
+        return true;
     }
 
     public List<Task> getTasks() {

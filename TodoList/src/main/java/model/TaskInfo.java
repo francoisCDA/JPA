@@ -24,6 +24,14 @@ public class TaskInfo {
     @OneToOne(mappedBy = "infoTache")
     private Task tache;
 
+    public TaskInfo() {
+    }
+
+    public TaskInfo(String description, LocalDate echeance, Priorite priorite) {
+        this.description = description;
+        this.echeance = echeance;
+        this.priorite = priorite;
+    }
 
     public void setId(Long id) {
         this.id = id;

@@ -52,8 +52,6 @@ public class ConsoleIHM {
 
     private void addTask() {
         String task,description;
-        Task tache = null;
-        TaskInfo infoTache = null;
         LocalDate date;
         Priorite priorite;
         int prioritInt;
@@ -65,21 +63,20 @@ public class ConsoleIHM {
            return;
         }
 
-        tache = new Task(task);
-        infoTache = new TaskInfo();
+        description = UtilIHM.inputText("Description de la tâche");
 
-        infoTache.setDescription(UtilIHM.inputText("Description de la tâche"));
-
-        infoTache.setEcheance(UtilIHM.inputDate("Date d'expiration (YYYY-MM-JJ)"));
+        date = UtilIHM.inputDate("Date d'expiration (YYYY-MM-JJ)");
 
         prioritInt = UtilIHM.menu(Priorite.getPriority(),"Priorité de la tâche");
 
-        infoTache.setPriorite(Priorite.getPriority(prioritInt));
+        priorite = Priorite.getPriority(prioritInt);
 
-        tache.setInfoTache(infoTache);
 
-        todoService.addTask(tache);
-
+        if (todoService.addTask(task,description,date,priorite)) {
+            UtilIHM.consoleConfirm("Tâche ajoutée");
+        } else {
+            UtilIHM.consoleFail("Ajout impossible");
+        }
     }
 
 
