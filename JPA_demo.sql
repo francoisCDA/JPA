@@ -14,9 +14,12 @@ select * from person;
 		TP TODOLIST
 **************************************/
 
+DROP DATABASE IF EXISTS todo_list;
+
 CREATE DATABASE IF NOT EXISTS todo_list;
 
 USE todo_list;
+
 
 DROP TABLE IF EXISTS todo;
 
