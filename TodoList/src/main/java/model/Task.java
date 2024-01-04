@@ -28,9 +28,10 @@ public class Task {
     private Utilisateur utilisateur;
 
 
-    public Task(String tache){
+    public Task(String tache, Utilisateur user){
         aFaire = tache;
         complete = false;
+        utilisateur = user;
     }
 
     public Task() {
@@ -44,6 +45,30 @@ public class Task {
 
     public Long getId() {
         return id;
+    }
+
+    public String getaFaire() {
+        return aFaire;
+    }
+
+    public void setaFaire(String aFaire) {
+        this.aFaire = aFaire;
+    }
+
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete = complete;
+    }
+
+    public Utilisateur getUtilisateur() {
+        return utilisateur;
+    }
+
+    public void setUtilisateur(Utilisateur utilisateur) {
+        this.utilisateur = utilisateur;
     }
 
     public void completed(){

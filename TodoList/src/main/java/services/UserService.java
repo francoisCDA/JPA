@@ -3,7 +3,11 @@ package services;
 import dao.UserDAO;
 import dao.UserDAOImpl;
 import jdk.jshell.execution.Util;
+import model.Priorite;
+import model.Task;
 import model.Utilisateur;
+
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.EntityManagerFactory;

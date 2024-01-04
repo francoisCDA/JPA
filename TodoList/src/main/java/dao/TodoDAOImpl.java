@@ -1,5 +1,6 @@
 package dao;
 
+import ihm.UtilIHM;
 import model.Task;
 
 import javax.persistence.EntityManagerFactory;
@@ -131,6 +132,27 @@ public class TodoDAOImpl extends TodoDAO{
             em.close();
             return false;
         }
+    }
+
+    public boolean update(Task tache) {
+        boolean ret = false;
+
+        em = _emf.createEntityManager();
+        em.getTransaction().begin();
+
+        try {
+            em.merge(tache);
+            em.getTransaction().commit();
+            ret = true;
+
+        } catch (Exception e){
+            UtilIHM.consoleError(e.toString());
+        } finally {
+            em.close();
+        }
+
+        return ret;
+
     }
 
     public void close(){
