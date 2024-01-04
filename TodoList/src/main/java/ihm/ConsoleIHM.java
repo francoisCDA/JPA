@@ -57,7 +57,7 @@ public class ConsoleIHM {
             switch (choix) {
                 case "A" -> addUser();
                 case "Q" -> run = false;
-                default -> handleChoix(choix);
+                default -> handleChoixUser(choix);
             }
 
         }
@@ -80,7 +80,7 @@ public class ConsoleIHM {
 
     }
 
-    private void handleChoix(String choix) {
+    private void handleChoixUser(String choix) {
 
         Long id;
 
@@ -97,29 +97,37 @@ public class ConsoleIHM {
             UtilIHM.consoleFail("erreur de saisie");
             return;
         }
-
     }
 
 
     private void menuTache(Long id) {
 
+        Utilisateur user = userService.getUserById(id);
         String choix;
 
-        UtilIHM.consoleLi("1 - Ajouter une tâche");
-        UtilIHM.consoleLi("2 - Afficher les tâches");
-        UtilIHM.consoleLi("3 - Terminer une tâche");
-        UtilIHM.consoleLi("4 - Modifier les infos d'une tâche");
-        UtilIHM.consoleLi("5 - Supprimer une tâche");
+        if (user.getTodoList().isEmpty()) {
+            UtilIHM.consoleConfirm(user.getPseudo() + " n'a aucune tâche");
+        } else {
+            UtilIHM.consoleConfirm("Tâches de "+ user.getPseudo());
+            for ( Task t: user.getTodoList()  ){
+                UtilIHM.consoleLi(t.toString());
+            }
+        }
+
+        UtilIHM.consoleLi("A - Ajouter une tâche");
+
         System.out.println();
-        UtilIHM.consoleLi("0 - Retour menu Utilisateur");
+        UtilIHM.consoleLi("Q - Retour menu Utilisateur");
         System.out.println();
 
-        choix = UtilIHM.inputText("Choix");
+        choix = UtilIHM.inputText("Selectionner une tâche par son ID");
+
+
 
         switch (choix) {
-            case "1" -> addTask();
-            case "2" -> printTasks();
-            case "3" -> completeTask();
+            case "1" -> addTask(user);
+            case "2" -> printTasks(user);
+
             case "4" -> updateTask();
             case "5" -> deleteTask();
             case "0" -> {
