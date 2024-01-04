@@ -19,9 +19,13 @@ public class Task {
 
     private boolean complete;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="info_tache_id",referencedColumnName = "id_info_tache" )
     private TaskInfo infoTache;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Utilisateur utilisateur;
 
 
     public Task(String tache){

@@ -101,7 +101,9 @@ public class UtilIHM {
 
 
 
-
+    public static void H1(String titre) {
+        System.out.printf("\n\n *** %s ***\n\n",titre.toUpperCase());
+    }
 
     public static void consoleError(String error) {
         System.out.printf("\n\n !!! %s !!!\n",error.toUpperCase());

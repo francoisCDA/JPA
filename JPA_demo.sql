@@ -4,7 +4,7 @@
 
 CREATE DATABASE IF NOT EXISTS jpa_demo;
 
-
+DROP DATABASE IF EXISTS jpa_demo;
 
 USE jpa_demo;
 

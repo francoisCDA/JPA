@@ -1,20 +1,20 @@
 package services;
 
-import dao.ImplDAO;
-import dao.TodoDAO;
+import dao.TodoDAOImpl;
 import model.Priorite;
 import model.Task;
 import model.TaskInfo;
 
+import javax.persistence.EntityManagerFactory;
 import java.time.LocalDate;
 import java.util.List;
 
 public class TodoService {
 
-    private ImplDAO todoDao;
+    private TodoDAOImpl todoDao;
 
-    public TodoService(){
-        todoDao = new ImplDAO();
+    public TodoService(EntityManagerFactory emf){
+        todoDao = new TodoDAOImpl(emf);
     }
 
     public boolean addTask(String tache, String description, LocalDate expir, Priorite priorite){
@@ -31,6 +31,8 @@ public class TodoService {
 
         return true;
     }
+
+    public Task getTask(Long id) { return todoDao.getTask(id); }
 
     public List<Task> getTasks() {
         return todoDao.getTasks();

@@ -10,13 +10,13 @@ import java.util.List;
 
 public abstract class TodoDAO {
 
-    protected EntityManagerFactory emf;
+    protected EntityManagerFactory _emf;
     protected EntityManager em;
    // protected EntityTransaction transaction;
 
 
-    public TodoDAO(){
-        emf = Persistence.createEntityManagerFactory("todoList");
+    public TodoDAO(EntityManagerFactory emf){
+        _emf = emf;  //Persistence.createEntityManagerFactory("todoList");
     }
 
     public abstract void addTask(Task tache);
