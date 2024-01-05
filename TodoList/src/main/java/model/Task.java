@@ -3,6 +3,8 @@ package model;
 import org.hibernate.annotations.Columns;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "todo")
@@ -28,10 +30,16 @@ public class Task {
     private Utilisateur utilisateur;
 
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name="tache_categorie",joinColumns = @JoinColumn(name="tache_id"), inverseJoinColumns = @JoinColumn(name="categorie_id"))
+    private List<Categorie> categories;
+
+
     public Task(String tache, Utilisateur user){
         aFaire = tache;
         complete = false;
         utilisateur = user;
+        categories = new ArrayList<>();
     }
 
     public Task() {
@@ -79,11 +87,13 @@ public class Task {
     public String toString() {
         return "\t-> " +
                 "id : " + id +
-                ", '" + aFaire + '\'' +
+                ", " + aFaire +
                 ", " + (complete ? "terminée" : "à finir") +
-                ", échéance : " + infoTache.getEcheance() +
+                ", utilisateur : " + utilisateur.getPseudo() +
+                ",\n\t échéance : " + infoTache.getEcheance() +
                 ", priorité : " + infoTache.getPriorite() +
                 ", détails : " + infoTache.getDescription() +
+                ",\n\t categories : " + categories.toString() +
                 '.';
     }
 

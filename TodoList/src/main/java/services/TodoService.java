@@ -1,10 +1,7 @@
 package services;
 
 import dao.TodoDAOImpl;
-import model.Priorite;
-import model.Task;
-import model.TaskInfo;
-import model.Utilisateur;
+import model.*;
 
 import javax.persistence.EntityManagerFactory;
 import java.time.LocalDate;
@@ -61,6 +58,12 @@ public class TodoService {
 
     public void closeEmf(){
         todoDao.close();
+    }
+
+    public List<Task> getTasksByCategorie(Categorie cat) {
+
+        return todoDao.getTasksByCategorie(cat);
+
     }
 
 }

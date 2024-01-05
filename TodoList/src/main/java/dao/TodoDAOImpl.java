@@ -1,6 +1,7 @@
 package dao;
 
 import ihm.UtilIHM;
+import model.Categorie;
 import model.Task;
 
 import javax.persistence.EntityManagerFactory;
@@ -154,6 +155,24 @@ public class TodoDAOImpl extends TodoDAO{
         return ret;
 
     }
+
+    public List<Task> getTasksByCategorie(Categorie cat){
+        List<Task> ret = null;
+
+        em = _emf.createEntityManager();
+        em.getTransaction().begin();
+
+        Query query = em.createQuery("select t from Task t join t.categories c where c.categorie = :cat");
+        query.setParameter("cat",cat.getCategorie());
+
+        ret = query.getResultList();
+
+        // pas certain que ça marche... pas testé
+
+        return ret;
+
+    }
+
 
     public void close(){
         _emf.close();

@@ -1,11 +1,14 @@
 package ihm;
 
+import model.Categorie;
 import model.Priorite;
 import model.Task;
 import model.Utilisateur;
+import services.CategorieService;
 import services.TodoService;
 import services.UserService;
 
+import javax.persistence.Column;
 import javax.persistence.EntityManagerFactory;
 import java.time.LocalDate;
 import java.util.List;
@@ -18,9 +21,12 @@ public class ConsoleIHM {
     private final UserService userService;
     private final TodoService todoService;
 
+    private final CategorieService categorieService;
+
     public ConsoleIHM(EntityManagerFactory emf) {
         userService = new UserService(emf);
         todoService = new TodoService(emf);
+        categorieService = new CategorieService(emf);
     }
 
 
@@ -33,7 +39,7 @@ public class ConsoleIHM {
         while (run) {
 
             List<Utilisateur> userList = userService.getUsers();
-
+            List<Categorie> categories = categorieService.getAll();
 
             UtilIHM.H1("Menu Principal");
 
@@ -46,9 +52,21 @@ public class ConsoleIHM {
                     UtilIHM.consoleLi(u.getId() + " - selectionner : " + u.getPseudo());
                 }
             }
+            System.out.println();
+
+            if (userList.isEmpty()){
+                UtilIHM.consoleConfirm("Aucune catégorie de définie");
+            } else {
+                UtilIHM.consoleConfirm("Gérer les catégories");
+                for (Categorie c:categories) {
+                    UtilIHM.consoleLi(c.getCategorie());
+                }
+            }
+
 
             System.out.println();
             UtilIHM.consoleLi("A - Ajouter un utilisateur");
+            UtilIHM.consoleLi("C - Créer une catégorie");
             UtilIHM.consoleLi("Q - Quitter l'application");
             System.out.println();
 
@@ -56,12 +74,36 @@ public class ConsoleIHM {
 
             switch (choix) {
                 case "A" -> addUser();
+                case "C" -> addCat();
                 case "Q" -> run = false;
                 default -> handleChoixUser(choix);
             }
 
         }
         todoService.closeEmf();
+    }
+
+    private void addCat() {
+        String cat;
+
+        UtilIHM.consoleConfirm("Créer une catégorie");
+
+        cat = UtilIHM.inputText("Nom de la catégorie");
+
+        try {
+            Long number = parseLong(cat);
+
+            UtilIHM.consoleFail("une catégorie ne peut être un nombre");
+
+        } catch (NumberFormatException e) {
+            // situation où l'erreur est attendue, pas certain que ce soit orthodoxe, mais ça devrait le faire...
+            if (categorieService.create(cat)) {
+                UtilIHM.consoleConfirm("la catégorie a été créée");
+            } else {
+                UtilIHM.consoleFail("Problème à la création de la catégorie");
+            }
+        }
+
     }
 
 
@@ -82,6 +124,13 @@ public class ConsoleIHM {
 
     private void handleChoixUser(String choix) {
 
+        Categorie categorie = categorieService.get(choix);
+
+        if (categorie != null) {
+            menuCategorie(categorie);
+            return;
+        }
+
         Long id;
 
         try {
@@ -96,6 +145,12 @@ public class ConsoleIHM {
         } catch (NumberFormatException e) {
             UtilIHM.consoleFail("Erreur de saisie");
         }
+    }
+
+    private void menuCategorie(Categorie categorie) {
+
+        List<Task> categories = todoService.getTasksByCategorie(categorie);
+
     }
 
 
