@@ -65,4 +65,21 @@ public class UserDAOImpl extends UserDAO {
         return ret;
 
     }
+
+    public void remove(Long userId) {
+
+
+
+        em = _emf.createEntityManager();
+        em.getTransaction().begin();
+
+        Utilisateur userToRm = em.getReference(Utilisateur.class, userId);
+
+        em.remove(userToRm);
+        em.getTransaction().commit();
+
+        em.close();
+
+    }
+
 }

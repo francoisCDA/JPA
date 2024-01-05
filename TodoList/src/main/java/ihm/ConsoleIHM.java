@@ -36,7 +36,7 @@ public class ConsoleIHM {
 
 
             UtilIHM.H1("Menu Principal");
-            UtilIHM.consoleLi("A - Ajouter un utilsateur");
+
 
             if (userList.isEmpty()) {
                 UtilIHM.consoleConfirm("Aucun utilisateur");
@@ -48,6 +48,7 @@ public class ConsoleIHM {
             }
 
             System.out.println();
+            UtilIHM.consoleLi("A - Ajouter un utilisateur");
             UtilIHM.consoleLi("Q - Quitter l'application");
             System.out.println();
 
@@ -113,6 +114,7 @@ public class ConsoleIHM {
         }
 
         UtilIHM.consoleLi("A - Ajouter une tâche");
+        UtilIHM.consoleLi("REMOVE - Retirer l'utilisateur " + user.getPseudo());
         UtilIHM.consoleLi("Q - Retour menu Utilisateur");
         System.out.println();
 
@@ -120,9 +122,9 @@ public class ConsoleIHM {
         choix = UtilIHM.inputText("Choix").toUpperCase();
 
 
-
         switch (choix) {
             case "A" -> addTask(user);
+            case "REMOVE" -> userService.remove(user) ;
             case "Q" -> {
                 return;
             }
@@ -130,6 +132,7 @@ public class ConsoleIHM {
         }
 
     }
+
 
     private void handleChoixTache(String choix, Long idUser) {
 
@@ -160,11 +163,14 @@ public class ConsoleIHM {
         UtilIHM.consoleLi("2 - description : " + tache.getInfoTache().getDescription());
         UtilIHM.consoleLi("3 - priorité : " + tache.getInfoTache().getPriorite());
         UtilIHM.consoleLi("4 - échéance : " + tache.getInfoTache().getEcheance());
-        UtilIHM.consoleLi("5 - user : " + tache.getUtilisateur());
+        UtilIHM.consoleLi("5 - " + (tache.isComplete() ? "tâche terminée" : "terminer la tâche" ));
+        UtilIHM.consoleLi("6 - user : " + tache.getUtilisateur().getPseudo());
         System.out.print("\n");
-        UtilIHM.consoleLi("0 - Retour");
+        UtilIHM.consoleLi("DEL - Supprimer la tâche");
+        System.out.print("\n");
+        UtilIHM.consoleLi("Q - Retour");
 
-        String choix = UtilIHM.inputText("élément à modifier");
+        String choix = UtilIHM.inputText("élément à modifier").toUpperCase();
 
 
         switch (choix) {
@@ -173,8 +179,19 @@ public class ConsoleIHM {
             case "2" -> tache.getInfoTache().setDescription(UtilIHM.inputText("Description de la tâche"));
             case "3" -> tache.getInfoTache().setPriorite(prioriteToDo());
             case "4" -> tache.getInfoTache().setEcheance(UtilIHM.inputDate("Date d'expiration (YYYY-MM-JJ)"));
-            case "5" -> tache.setUtilisateur(userToDo());
-            case "0" -> {
+            case "5" -> {
+                if (tache.isComplete()) {
+                    return;
+                } else {
+                    tache.completed();
+                }
+            }
+            case "6" -> tache.setUtilisateur(userToDo());
+            case "DEL" -> {
+                todoService.removeTask(tache.getId());
+                return;
+            }
+            case "Q" -> {
                 return;
             }
 
@@ -182,7 +199,6 @@ public class ConsoleIHM {
                 UtilIHM.consoleFail("Saisie invalide");
                 return;
             }
-
         }
 
         if (todoService.update(tache)) {

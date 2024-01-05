@@ -2,6 +2,7 @@ package services;
 
 import dao.UserDAO;
 import dao.UserDAOImpl;
+import ihm.UtilIHM;
 import jdk.jshell.execution.Util;
 import model.Priorite;
 import model.Task;
@@ -50,6 +51,8 @@ public class UserService {
         }
     }
 
-
+    public void remove(Utilisateur user){
+        userDAO.remove(user.getId());
+    }
 
 }
