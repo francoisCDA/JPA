@@ -36,9 +36,12 @@ public class UserService {
 
     }
 
+
     public Utilisateur getUserById(Long id) {
         return userDAO.getUserById(id);
     }
+
+
 
     public boolean isUser(Long id) {
 
@@ -51,8 +54,19 @@ public class UserService {
         }
     }
 
+
+
     public void remove(Utilisateur user){
         userDAO.remove(user.getId());
     }
 
-}
+    public boolean removeTask(Task tacheToRemove) {
+
+        return userDAO.removeTaskToUser(tacheToRemove);
+    }
+
+
+
+    public void closeEmf(){
+        userDAO.close();
+    }}

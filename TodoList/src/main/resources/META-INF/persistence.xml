@@ -5,8 +5,10 @@
              version="3.0">
   <persistence-unit name="todoList">
       <description>To Do List en JPA</description>
-
+      <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
       <class>model.Task</class>
+      <class>model.Categorie</class>
+      <class>model.Utilisateur</class>
 
       <properties>
         <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
@@ -14,6 +16,7 @@
         <property name="javax.persistence.jdbc.user" value="root"/>
         <property name="javax.persistence.jdbc.password" value="admin"/>
         <property name="hibernate.hbm2ddl.auto" value="update"/>
+
       </properties>
 
 

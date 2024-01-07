@@ -23,6 +23,17 @@ public class UtilIHM {
         return ret;
     }
 
+    public static boolean isCanBeLong(String nom) {
+
+        try{
+            Long numb = parseLong(nom);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+    }
+
     public static int inputNumber(String label) throws Exception {
 
         String saisie = inputText(label);
@@ -103,6 +114,14 @@ public class UtilIHM {
 
     public static void H1(String titre) {
         System.out.printf("\n\n *** %s ***\n\n",titre.toUpperCase());
+    }
+
+    public static void H2(String titre) {
+        System.out.printf("\n ** %s **\n\n",titre);
+    }
+
+    public static void H3(String titre) {
+        System.out.printf("\n * %s *\n",titre);
     }
 
     public static void consoleError(String error) {

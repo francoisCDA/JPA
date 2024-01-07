@@ -15,7 +15,7 @@ public class Utilisateur {
     @Column(unique = true)
     private String pseudo;
 
-    @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Task> todoList;
 
     public Utilisateur(String pseudo){
@@ -49,6 +49,20 @@ public class Utilisateur {
 
     public void setTodoList(List<Task> todoList) {
         this.todoList = todoList;
+    }
+
+    public boolean rmTaskById(Long id){
+
+        if (todoList != null && !todoList.isEmpty()) {
+
+            for (Task t: todoList){
+                if (t.getId().equals(id)){
+                    todoList.remove(t);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

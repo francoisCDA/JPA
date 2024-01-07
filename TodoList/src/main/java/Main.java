@@ -7,9 +7,15 @@ public class Main {
 
     public static void main(String[] args) {
 
-        ConsoleIHM todoList = new ConsoleIHM(Persistence.createEntityManagerFactory("todoList"));
 
-        todoList.exe();
+
+//        ConsoleIHM todoList = new ConsoleIHM();
+//
+//        todoList.exe();
+
+        ConsoleIHM.exe();
+
+
 
     }
 

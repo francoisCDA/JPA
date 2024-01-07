@@ -1,5 +1,6 @@
 package dao;
 
+import ihm.UtilIHM;
 import model.Categorie;
 
 import javax.persistence.EntityManager;
@@ -10,9 +11,9 @@ import java.util.List;
 
 public class CategorieDAO implements InterfaceDAO<Categorie> {
 
-    private final EntityManagerFactory _emf;
+    private EntityManagerFactory _emf;
 
-    private EntityManager em;
+   // private EntityManager em;
 
     public CategorieDAO(EntityManagerFactory emf){
         _emf = emf;
@@ -23,11 +24,12 @@ public class CategorieDAO implements InterfaceDAO<Categorie> {
     public List<Categorie> getAll() {
         List<Categorie> ret = null;
 
-        em = _emf.createEntityManager();
+        EntityManager em = _emf.createEntityManager();
         em.getTransaction().begin();
 
         ret = em.createQuery("select c from Categorie c", Categorie.class).getResultList();
 
+        em.getTransaction().commit();
         em.close();
 
         return ret;
@@ -35,7 +37,7 @@ public class CategorieDAO implements InterfaceDAO<Categorie> {
 
     @Override
     public boolean save(Categorie cat) {
-        em = _emf.createEntityManager();
+        EntityManager em = _emf.createEntityManager();
         em.getTransaction().begin();
 
         boolean ret = false;
@@ -53,27 +55,55 @@ public class CategorieDAO implements InterfaceDAO<Categorie> {
         return ret;
     }
 
+    @Override
+    public boolean rm(Long id) {
+
+        EntityManager em = _emf.createEntityManager();
+        em.getTransaction().begin();
+
+        boolean ret = false;
+
+        try {
+            Categorie catToRm = em.find(Categorie.class,id);
+            em.remove(catToRm);
+            em.getTransaction().commit();
+            ret = true;
+        } catch (Exception ignored){
+            em.getTransaction().rollback();
+        } finally {
+            em.close();
+        }
+
+
+        return ret;
+    }
+
 
     public Categorie get(String cat){
-        em = _emf.createEntityManager();
+        EntityManager em = _emf.createEntityManager();
         em.getTransaction().begin();
 
         Categorie ret = null;
 
-        Query query = em.createQuery("select c from Categorie c where categorie = :cat", Categorie.class);
-        query.setParameter("cat",cat);
-
         try {
+
+            Query query = em.createQuery("select c from Categorie c where categorie = :cat", Categorie.class);
+            query.setParameter("cat",cat);
+
              ret = (Categorie) query.getSingleResult();
-
+            em.getTransaction().commit();
         } catch (NoResultException ignored){
-
+            em.getTransaction().rollback();
         } finally {
             em.close();
         }
 
         return ret;
 
+    }
+
+    public void close(){
+        _emf.close();
     }
 
 }

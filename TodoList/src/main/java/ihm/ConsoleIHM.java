@@ -10,7 +10,9 @@ import services.UserService;
 
 import javax.persistence.Column;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Integer.parseInt;
@@ -18,19 +20,17 @@ import static java.lang.Long.parseLong;
 
 public class ConsoleIHM {
 
-    private final UserService userService;
-    private final TodoService todoService;
+    private static UserService userService;
+    private static TodoService todoService;
+    private static CategorieService categorieService;
 
-    private final CategorieService categorieService;
 
-    public ConsoleIHM(EntityManagerFactory emf) {
+    public static void exe() {
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("todoList");
         userService = new UserService(emf);
         todoService = new TodoService(emf);
         categorieService = new CategorieService(emf);
-    }
-
-
-    public void exe() {
 
         boolean run = true;
         String choix;
@@ -49,24 +49,27 @@ public class ConsoleIHM {
             } else {
                 UtilIHM.consoleConfirm("Liste des utlisateurs");
                 for ( Utilisateur u:userList ){
-                    UtilIHM.consoleLi(u.getId() + " - selectionner : " + u.getPseudo());
+                    UtilIHM.consoleLi(u.getId() + " - selectionner : " + u.getPseudo() +", " + u.getTodoList().size() + " tâche en cours");
                 }
             }
             System.out.println();
 
-            if (userList.isEmpty()){
+            if (categories.isEmpty()){
                 UtilIHM.consoleConfirm("Aucune catégorie de définie");
             } else {
-                UtilIHM.consoleConfirm("Gérer les catégories");
+                UtilIHM.consoleConfirm("Filtrer par catégorie");
                 for (Categorie c:categories) {
-                    UtilIHM.consoleLi(c.getCategorie());
+                    UtilIHM.consoleLi(c.getCategorie() + " - nombre de tâches correspondantes : " + todoService.nbTaskByCat(c));
                 }
             }
-
 
             System.out.println();
             UtilIHM.consoleLi("A - Ajouter un utilisateur");
-            UtilIHM.consoleLi("C - Créer une catégorie");
+            UtilIHM.consoleLi("C - Créer une nouvelle catégorie");
+            UtilIHM.consoleLi("R - Supprimer une catégorie");
+            UtilIHM.consoleLi("L - Lister toutes les tâches");
+            UtilIHM.consoleLi("M - Lister les tâches actives");
+            UtilIHM.consoleLi("N - Lister les tâches terminées");
             UtilIHM.consoleLi("Q - Quitter l'application");
             System.out.println();
 
@@ -75,58 +78,101 @@ public class ConsoleIHM {
             switch (choix) {
                 case "A" -> addUser();
                 case "C" -> addCat();
+                case "R" -> rmCat(categories);
+                case "L" -> printTasks(todoService.getTasks());
+                case "M" -> printTasks(todoService.getActiveTask());
+                case "N" -> printTasks(todoService.getCompletedTask());
                 case "Q" -> run = false;
                 default -> handleChoixUser(choix);
             }
-
         }
         todoService.closeEmf();
+        userService.closeEmf();
+        categorieService.closeEmf();
+        emf.close();
     }
 
-    private void addCat() {
+    private static void rmCat(List<Categorie> categories) {
+
+        if (categories.isEmpty()) {
+            UtilIHM.consoleConfirm("Aucune catégorie");
+        } else {
+            UtilIHM.H2("Liste des catégories");
+            for (Categorie c: categories) {
+                UtilIHM.consoleLi(c.getId() + " - supprimer : " + c.getCategorie());
+            }
+                UtilIHM.consoleLi("0 - annuler\n");
+
+            try {
+                Long choix = UtilIHM.inputLong("Indiquer l'ID");
+
+                for(Categorie c: categories){
+                    if (c.getId().equals(choix)){
+                        if (categorieService.rmCat(c.getId())){
+                            UtilIHM.consoleConfirm("suppression effectuée");
+                        } else {
+                            UtilIHM.consoleFail("problème de suppression");
+                        }
+                        return;
+                    }
+                }
+
+                UtilIHM.consoleFail("Catégorie non trouvée");
+
+            } catch (Exception e) {
+                UtilIHM.consoleError("saisie invalide");
+            }
+
+        }
+
+    }
+
+
+    private static Categorie addCat() {
         String cat;
 
         UtilIHM.consoleConfirm("Créer une catégorie");
 
-        cat = UtilIHM.inputText("Nom de la catégorie");
+        cat = UtilIHM.inputText("Nom de la catégorie").toUpperCase();
+
+
+        if (cat.isBlank() || cat.length() == 1 || cat.equals("DEL") || cat.equals("REMOVE")) {
+            UtilIHM.consoleFail("Nom de catégorie invalide");
+            return null;
+        }
 
         try {
             Long number = parseLong(cat);
-
             UtilIHM.consoleFail("une catégorie ne peut être un nombre");
-
         } catch (NumberFormatException e) {
-            // situation où l'erreur est attendue, pas certain que ce soit orthodoxe, mais ça devrait le faire...
-            if (categorieService.create(cat)) {
-                UtilIHM.consoleConfirm("la catégorie a été créée");
-            } else {
-                UtilIHM.consoleFail("Problème à la création de la catégorie");
-            }
+            return categorieService.create(cat);
         }
 
+        return null;
     }
 
 
-    private void addUser() {
+    private static void addUser() {
         String pseudo;
 
         UtilIHM.consoleConfirm("Ajouter un utilisateur");
 
-        pseudo = UtilIHM.inputText("pseudo de l'utilisateur");
+        pseudo = UtilIHM.inputText("Pseudo du nouvel utilisateur");
 
         if (userService.addUser(pseudo)) {
             UtilIHM.consoleConfirm("Nouvel utilisateur ajouté");
         } else {
             UtilIHM.consoleFail("Ajoute d'utilsateur impossible");
         }
-
     }
 
-    private void handleChoixUser(String choix) {
+
+    private static void handleChoixUser(String choix) {
 
         Categorie categorie = categorieService.get(choix);
 
         if (categorie != null) {
+            UtilIHM.consoleConfirm("selection de la categorie : "+ categorie.getCategorie());
             menuCategorie(categorie);
             return;
         }
@@ -147,35 +193,38 @@ public class ConsoleIHM {
         }
     }
 
-    private void menuCategorie(Categorie categorie) {
+    private static void menuCategorie(Categorie categorie) {
 
-        List<Task> categories = todoService.getTasksByCategorie(categorie);
+        List<Task> selectedTask = todoService.getTasksByCategorie(categorie);
+
+        printTasks(selectedTask);
+
 
     }
 
 
-    private void menuTache(Long id) {
+    private static void menuTache(Long id) {
 
         Utilisateur user = userService.getUserById(id);
+
         String choix;
 
         if (user.getTodoList().isEmpty()) {
-            UtilIHM.consoleConfirm(user.getPseudo() + " n'a aucune tâche");
+            UtilIHM.H2(user.getPseudo() + " n'a aucune tâche");
         } else {
-            UtilIHM.consoleConfirm("Selectionner une tâche de " + user.getPseudo() +  " par son ID");
+            UtilIHM.H3("Lises des tâches de " + user.getPseudo() );
             for ( Task t: user.getTodoList()  ){
                 UtilIHM.consoleLi(t.toString());
             }
         }
 
-        UtilIHM.consoleLi("A - Ajouter une tâche");
+        UtilIHM.consoleLi("Selectionner une tâche par son ID -");
+        UtilIHM.consoleLi("A - Ajouter une tâche à " + user.getPseudo());
         UtilIHM.consoleLi("REMOVE - Retirer l'utilisateur " + user.getPseudo());
         UtilIHM.consoleLi("Q - Retour menu Utilisateur");
         System.out.println();
 
-
         choix = UtilIHM.inputText("Choix").toUpperCase();
-
 
         switch (choix) {
             case "A" -> addTask(user);
@@ -189,7 +238,7 @@ public class ConsoleIHM {
     }
 
 
-    private void handleChoixTache(String choix, Long idUser) {
+    private static void handleChoixTache(String choix, Long idUser) {
 
         Long id;
 
@@ -198,10 +247,20 @@ public class ConsoleIHM {
 
             Task tache = todoService.getTask(id);
 
-            if (tache != null && tache.getUtilisateur().getId().equals(idUser)) {
-                updateTask(tache);
+
+            if (tache != null ) {
+
+                UtilIHM.consoleConfirm(tache.toString());
+
+                if (idUser != 0L && !tache.getUtilisateur().getId().equals(idUser) ){
+                    UtilIHM.consoleFail("Tâche d'un autre utilisateur");
+                    return;
+                }
+
+                while (updateTask(tache));
+
             } else {
-                UtilIHM.consoleFail("Tache invalide valide");
+                UtilIHM.consoleFail("Aucune tâche correspondante");
             }
 
         } catch (NumberFormatException e) {
@@ -210,23 +269,45 @@ public class ConsoleIHM {
     }
 
 
-    private void updateTask(Task tache) {
+    private static boolean updateTask(Task tache) {
 
-        UtilIHM.consoleConfirm("mettre à jour la tâche " + tache.getId());
+        List<Categorie> categories = categorieService.getAll();
+
+        UtilIHM.H2("mettre à jour la tâche " + tache.getId());
 
         UtilIHM.consoleLi("1 - tache : " + tache.getaFaire());
         UtilIHM.consoleLi("2 - description : " + tache.getInfoTache().getDescription());
         UtilIHM.consoleLi("3 - priorité : " + tache.getInfoTache().getPriorite());
         UtilIHM.consoleLi("4 - échéance : " + tache.getInfoTache().getEcheance());
-        UtilIHM.consoleLi("5 - " + (tache.isComplete() ? "tâche terminée" : "terminer la tâche" ));
+        UtilIHM.consoleLi("5 - " + (tache.isComplete() ? "tâche 'terminée'" : "marquer comme 'terminée'" ));
         UtilIHM.consoleLi("6 - user : " + tache.getUtilisateur().getPseudo());
+
+        for (Categorie c:categories) {
+            UtilIHM.consoleLi(c.getCategorie() + " - " + (tache.getCategoriesString().contains(c.getCategorie()) ? "RETIRER DE" : "AJOUTER À") + " la categorie " + c.getCategorie() );
+        }
+
+        UtilIHM.consoleLi("7 - ajouter une nouvelle catégorie");
+
         System.out.print("\n");
         UtilIHM.consoleLi("DEL - Supprimer la tâche");
         System.out.print("\n");
         UtilIHM.consoleLi("Q - Retour");
+        System.out.println();
 
         String choix = UtilIHM.inputText("élément à modifier").toUpperCase();
 
+        for (Categorie cat: categories) {
+            if (cat.getCategorie().equals(choix)) {
+                if (todoService.toogleCat(tache,cat)){
+                 UtilIHM.consoleConfirm("Les catégories ont bien été mise à jour");
+                } else {
+                 UtilIHM.consoleFail("Problème pendant la modification de la mise à jour");
+                }
+                return true;
+            }
+        }
+
+        Categorie newCat = null;
 
         switch (choix) {
 
@@ -236,24 +317,42 @@ public class ConsoleIHM {
             case "4" -> tache.getInfoTache().setEcheance(UtilIHM.inputDate("Date d'expiration (YYYY-MM-JJ)"));
             case "5" -> {
                 if (tache.isComplete()) {
-                    return;
+                    return true;
                 } else {
                     tache.completed();
                 }
             }
-            case "6" -> tache.setUtilisateur(userToDo());
+            case "6" -> {
+                Utilisateur user = userToDo();
+                if (user == null) {
+                    UtilIHM.consoleFail("Utilisateur invalide");
+                    return true;
+                }
+                tache.setUtilisateur(user);
+            }
+            case "7" -> newCat = addCat();
             case "DEL" -> {
-                todoService.removeTask(tache.getId());
-                return;
+               // if (todoService.removeTask(tache.getId())){
+                if (userService.removeTask(tache) && todoService.removeTask(tache.getId())){
+                    UtilIHM.consoleConfirm("Tâche supprimée");
+                } else {
+                    UtilIHM.consoleError("Problème à la suppresion de la tâche");
+                }
+                return false;
             }
             case "Q" -> {
-                return;
+                return false;
             }
 
             default -> {
                 UtilIHM.consoleFail("Saisie invalide");
-                return;
+                return true;
             }
+        }
+
+        if (newCat != null) {
+            todoService.toogleCat(tache,newCat);
+            return true;
         }
 
         if (todoService.update(tache)) {
@@ -262,9 +361,11 @@ public class ConsoleIHM {
             UtilIHM.consoleFail("Problème lors de la mise à jour");
         }
 
+        return true;
+
     }
 
-    private Utilisateur userToDo() {
+    private static Utilisateur userToDo() {
 
         List<Utilisateur> userList = userService.getUsers();
         Utilisateur ret= null;
@@ -291,9 +392,10 @@ public class ConsoleIHM {
     }
 
 
-    private void addTask(Utilisateur user) {
+    private static void addTask(Utilisateur user) {
 
         String task,description;
+        Categorie categorie = null;
         LocalDate date;
         Priorite priorite;
 
@@ -311,8 +413,14 @@ public class ConsoleIHM {
 
         priorite = prioriteToDo();
 
+       while (categorie == null) {
+           categorie = addCat();
+           if (categorie == null) {
+               UtilIHM.consoleFail("Saisie invalide");
+           }
+       }
 
-        if (todoService.addTask(task,description,date,priorite,user)) {
+        if (todoService.addTask(task,description,date,priorite,user,categorie)) {
             UtilIHM.consoleConfirm("Tâche ajoutée");
         } else {
             UtilIHM.consoleFail("Ajout impossible");
@@ -320,7 +428,8 @@ public class ConsoleIHM {
     }
 
 
-    private Priorite prioriteToDo(){
+
+    private static Priorite prioriteToDo(){
 
         Priorite ret;
         int prioritInt;
@@ -334,81 +443,25 @@ public class ConsoleIHM {
     }
 
 
-    private void printTasks() {
+    private static void printTasks( List<Task> tasks ) {
 
         UtilIHM.consoleConfirm("Liste des tâches :");
 
-        List<Task> tasks = todoService.getTasks() ;
-
-        for (Task t: tasks) {
-            System.out.println(t);
-        }
-
-        System.out.println("\n");
-
-    }
-
-    private void completeTask() {
-
-        UtilIHM.consoleConfirm("Terminer une tâche");
-
-        List<Task> tasks = todoService.getActiveTask();
-        String target;
-        Long id;
-
-        for (Task t: tasks) {
-            System.out.println(t);
-        }
-        System.out.println("\n");
-
-        target = UtilIHM.inputText("ID de la tâche à annuler (0 pour annuler)");
-
-        try {
-            id = parseLong(target);
-
-            if (id == 0) return;
-
-            if (todoService.completTask(id)){
-                UtilIHM.consoleConfirm("tâche compétée");
-            } else {
-                UtilIHM.consoleFail("Suppression impossible");
+        if (tasks.size() > 0) {
+            for (Task t: tasks) {
+                System.out.println(t);
             }
+            System.out.println();
 
-        } catch (NumberFormatException e) {
-            UtilIHM.consoleError("Erreur de saisie");
+            String choix = UtilIHM.inputText("Sélectionner une tâche par son ID ( 0 pour annuler )");
+
+            handleChoixTache(choix,0L);
+
+        } else {
+            UtilIHM.consoleConfirm("Aucune tâche trouvée");
         }
 
     }
 
-    private void deleteTask() {
-
-        UtilIHM.consoleConfirm("Supprimer une tâche");
-
-        List<Task> tasks = todoService.getCompletedTask();
-        String target;
-        Long id;
-
-        for (Task t: tasks) {
-            System.out.println(t);
-        }
-        System.out.println("\n");
-
-        target = UtilIHM.inputText("ID de la tâche à supprimer (0 pour annuler)");
-
-        try {
-            id = parseLong(target);
-
-            if (id == 0) return;
-
-            if (todoService.removeTask(id)){
-                UtilIHM.consoleConfirm("tâche supprimée");
-            } else {
-                UtilIHM.consoleError("Problème à la suppression");
-            }
-
-        } catch (NumberFormatException e) {
-            UtilIHM.consoleError("Erreur de saisie");
-        }
-    }
 
 }

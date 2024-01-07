@@ -23,11 +23,32 @@ public class CategorieService {
         return categorieDAO.get(cat);
     }
 
-    public boolean create(String cat) {
-        Categorie newCat = new Categorie();
+    public Categorie create(String cat) {
+
+        Categorie newCat = categorieDAO.get(cat);
+
+        if (newCat != null) {
+            return newCat;
+        }
+
+        newCat = new Categorie();
         newCat.setCategorie(cat);
-        return categorieDAO.save(newCat);
+
+        if (categorieDAO.save(newCat)){
+            return newCat;
+        } else {
+            return null;
+        }
     }
 
+    public boolean rmCat(Long catId){
+
+        return categorieDAO.rm(catId);
+
+    }
+
+    public void closeEmf(){
+        categorieDAO.close();
+    }
 
 }

@@ -16,7 +16,7 @@ public class Categorie {
     @Column(unique = true) // devrait peut-être être définie comme clé primaire...
     private String categorie;
 
-    @ManyToMany(mappedBy = "categories")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "categories")
     private List<Task> taches = new ArrayList<>();
 
 

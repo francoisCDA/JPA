@@ -21,16 +21,16 @@ public class Task {
 
     private boolean complete;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name="info_tache_id",referencedColumnName = "id_info_tache" )
     private TaskInfo infoTache;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private Utilisateur utilisateur;
 
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name="tache_categorie",joinColumns = @JoinColumn(name="tache_id"), inverseJoinColumns = @JoinColumn(name="categorie_id"))
     private List<Categorie> categories;
 
@@ -85,7 +85,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "\t-> " +
+        return "\ttache -> " +
                 "id : " + id +
                 ", " + aFaire +
                 ", " + (complete ? "terminée" : "à finir") +
@@ -94,7 +94,7 @@ public class Task {
                 ", priorité : " + infoTache.getPriorite() +
                 ", détails : " + infoTache.getDescription() +
                 ",\n\t categories : " + categories.toString() +
-                '.';
+                ".\n";
     }
 
     public TaskInfo getInfoTache() {
@@ -103,5 +103,33 @@ public class Task {
 
     public void setInfoTache(TaskInfo infoTache) {
         this.infoTache = infoTache;
+    }
+
+    public void addCategorie(Categorie categorie){
+        categories.add(categorie);
+    }
+
+    public void rmCategorie(Categorie categorie) {categories.remove(categorie);}
+
+    public void clearCategories() {
+        categories = new ArrayList<>();
+    }
+
+    public List<Categorie> getCategories() {
+        return categories;
+    }
+
+    public List<String> getCategoriesString() {
+
+       List<String> ret = new ArrayList<>();
+
+        if (categories.isEmpty()) {return ret;}
+
+        for (Categorie c: categories) {
+            ret.add(c.getCategorie());
+        }
+
+        return ret;
+
     }
 }

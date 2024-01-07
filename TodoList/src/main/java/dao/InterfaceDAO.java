@@ -8,4 +8,6 @@ public interface InterfaceDAO<T> {
 
     public boolean save(T obj);
 
+    public boolean rm(Long id);
+
 }

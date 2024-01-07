@@ -18,6 +18,8 @@ DROP DATABASE IF EXISTS todo_list;
 
 CREATE DATABASE IF NOT EXISTS todo_list;
 
+CREATE DATABASE IF NOT EXISTS todolist3;
+
 USE todo_list;
 
 

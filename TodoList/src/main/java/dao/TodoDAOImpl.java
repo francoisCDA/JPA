@@ -4,6 +4,7 @@ import ihm.UtilIHM;
 import model.Categorie;
 import model.Task;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import java.util.List;
@@ -33,6 +34,7 @@ public class TodoDAOImpl extends TodoDAO{
 
        Task ret = em.find(Task.class,id);
 
+       em.getTransaction().commit();
        em.close();
 
        return ret;
@@ -49,6 +51,7 @@ public class TodoDAOImpl extends TodoDAO{
 
         ret = em.createQuery("select t from Task t",Task.class).getResultList();
 
+        em.getTransaction().commit();
         em.close();
 
         return ret;
@@ -64,6 +67,7 @@ public class TodoDAOImpl extends TodoDAO{
 
         ret = em.createQuery("select t from Task t where complete = false ",Task.class).getResultList();
 
+        em.getTransaction().commit();
         em.close();
 
         return ret;
@@ -79,6 +83,7 @@ public class TodoDAOImpl extends TodoDAO{
 
         ret = em.createQuery("select t from Task t where complete = true",Task.class).getResultList();
 
+        em.getTransaction().commit();
         em.close();
 
         return ret;
@@ -123,16 +128,24 @@ public class TodoDAOImpl extends TodoDAO{
         em = _emf.createEntityManager();
         em.getTransaction().begin();
 
+        boolean ret = false;
+
         try {
-            Task task = em.getReference(Task.class,id);
+            Task task = em.find(Task.class,id);
           //  em.remove(task.getInfoTache()); géré par la cascade
             em.remove(task);
             em.getTransaction().commit();
-            return true;
+            ret = true;
+
         } catch (EnumConstantNotPresentException e) {
+            em.getTransaction().rollback();
+
+
+        } finally {
             em.close();
-            return false;
         }
+
+        return ret;
     }
 
     public boolean update(Task tache) {
@@ -147,6 +160,7 @@ public class TodoDAOImpl extends TodoDAO{
             ret = true;
 
         } catch (Exception e){
+            em.getTransaction().rollback();
             UtilIHM.consoleError(e.toString());
         } finally {
             em.close();
@@ -166,8 +180,8 @@ public class TodoDAOImpl extends TodoDAO{
         query.setParameter("cat",cat.getCategorie());
 
         ret = query.getResultList();
-
-        // pas certain que ça marche... pas testé
+        em.getTransaction().commit();
+        em.close();
 
         return ret;
 

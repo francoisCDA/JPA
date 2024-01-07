@@ -15,17 +15,22 @@ public class TodoService {
         todoDao = new TodoDAOImpl(emf);
     }
 
-    public boolean addTask(String tache, String descr, LocalDate expire, Priorite priorite, Utilisateur user){
+    public boolean addTask(String tache, String descr, LocalDate expire, Priorite priorite, Utilisateur user, Categorie categorie){
 
         if (tache.length() == 0 ) return false;
 
 
         Task newtache = new Task(tache,user);
-        TaskInfo infoTache = new TaskInfo(descr,expire,priorite);
 
+        TaskInfo infoTache = new TaskInfo(descr,expire,priorite);
         newtache.setInfoTache(infoTache);
 
         todoDao.addTask(newtache);
+
+        newtache.addCategorie(categorie);
+
+        todoDao.update(newtache);
+
 
         return true;
     }
@@ -53,7 +58,16 @@ public class TodoService {
     }
 
     public boolean removeTask(Long id){
-        return todoDao.removeTask(id);
+
+        Task tacheToRemove = todoDao.getTask(id);
+
+        tacheToRemove.clearCategories();
+
+        todoDao.update(tacheToRemove);
+
+
+
+        return todoDao.removeTask(tacheToRemove.getId());
     }
 
     public void closeEmf(){
@@ -63,6 +77,26 @@ public class TodoService {
     public List<Task> getTasksByCategorie(Categorie cat) {
 
         return todoDao.getTasksByCategorie(cat);
+
+    }
+
+    public int nbTaskByCat(Categorie cat){
+        List<Task> taskByCat = todoDao.getTasksByCategorie(cat);
+
+        return taskByCat.size();
+    }
+
+    public boolean toogleCat(Task tache, Categorie categorie) {
+
+        for (Categorie c: tache.getCategories()) {
+            if (c.getCategorie().equals(categorie.getCategorie())){
+                tache.rmCategorie(c);
+                return todoDao.update(tache);
+            }
+        }
+
+        tache.addCategorie(categorie);
+        return todoDao.update(tache);
 
     }
 
