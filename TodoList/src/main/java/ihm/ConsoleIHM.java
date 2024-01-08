@@ -135,7 +135,6 @@ public class ConsoleIHM {
 
         cat = UtilIHM.inputText("Nom de la catégorie").toUpperCase();
 
-
         if (cat.isBlank() || cat.length() == 1 || cat.equals("DEL") || cat.equals("REMOVE")) {
             UtilIHM.consoleFail("Nom de catégorie invalide");
             return null;

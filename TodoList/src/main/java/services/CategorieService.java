@@ -47,6 +47,8 @@ public class CategorieService {
 
     }
 
+
+
     public void closeEmf(){
         categorieDAO.close();
     }

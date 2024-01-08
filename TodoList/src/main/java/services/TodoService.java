@@ -27,9 +27,11 @@ public class TodoService {
 
         todoDao.addTask(newtache);
 
-        newtache.addCategorie(categorie);
+        toogleCat(newtache,categorie);
 
-        todoDao.update(newtache);
+//        newtache.addCategorie(categorie);
+//
+//        todoDao.update(newtache);
 
 
         return true;
