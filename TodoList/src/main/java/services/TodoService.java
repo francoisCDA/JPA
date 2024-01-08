@@ -33,7 +33,6 @@ public class TodoService {
 //
 //        todoDao.update(newtache);
 
-
         return true;
     }
 
@@ -66,7 +65,6 @@ public class TodoService {
         tacheToRemove.clearCategories();
 
         todoDao.update(tacheToRemove);
-
 
 
         return todoDao.removeTask(tacheToRemove.getId());

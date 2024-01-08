@@ -24,7 +24,7 @@ public class UserDAOImpl extends UserDAO {
 
         ret = em.createQuery("select u from Utilisateur u",Utilisateur.class).getResultList();
 
-      //  em.getTransaction().commit();
+        //em.getTransaction().commit();
         em.close();
 
         return ret;
