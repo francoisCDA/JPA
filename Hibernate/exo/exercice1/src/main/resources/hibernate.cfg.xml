@@ -7,7 +7,7 @@
 
     <!-- a SessionFactory instance listed as /jndi/name -->
     <session-factory>
-
+        <mapping class="models.Produit"/>
 
     </session-factory>
 

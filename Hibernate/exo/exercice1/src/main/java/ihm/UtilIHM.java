@@ -73,7 +73,7 @@ public class UtilIHM {
             input = inputText(label);
 
             try {
-                ret = LocalDate.parse(input); // format date attendu YYYY-MM-JJ
+                ret = LocalDate.parse(input + " (YYYY-MM-JJ)"); // format date attendu YYYY-MM-JJ
 
                 valide = true;
 

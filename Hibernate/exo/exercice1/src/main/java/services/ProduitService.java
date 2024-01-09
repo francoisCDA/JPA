@@ -34,4 +34,7 @@ public class ProduitService {
     public void update(Produit produit) { produitDAO.update(produit);}
     public void del(Long id) {produitDAO.remove(id);}
 
+
+
+
 }
