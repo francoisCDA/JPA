@@ -16,6 +16,15 @@
         <mapping class="heritage.single_table.PaymentS"/>
         <mapping class="heritage.single_table.PayPalPaymentS"/>
 
+        <mapping class="heritage.table_per_class.PaymentD"/>
+        <mapping class="heritage.table_per_class.CreditCardPaymentD"/>
+        <mapping class="heritage.table_per_class.PayPalPaymentD"/>
+
+        <mapping class="heritage.table_per_class_no_abstract.PaymentDnA"/>
+        <mapping class="heritage.table_per_class_no_abstract.CreditCardPaymentDnA"/>
+        <mapping class="heritage.table_per_class_no_abstract.PayPalPaymentDnA"/>
+
+        <mapping class="heritage.demo.model.Personne"/>
 
     </session-factory>
 

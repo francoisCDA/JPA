@@ -1,4 +1,4 @@
-package heritage.single_table;
+package heritage.table_per_class_no_abstract;
 
 
 
@@ -7,14 +7,12 @@ import java.util.Date;
 
 
 @Entity
-@Table(name= "payment_single_table")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "discriminator", discriminatorType = DiscriminatorType.INTEGER)
-public abstract class PaymentS {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public class PaymentDnA {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long idPayment;
 
     private Double Amount;

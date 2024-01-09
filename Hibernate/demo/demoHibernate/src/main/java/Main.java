@@ -2,6 +2,10 @@ import heritage.joined_table.CreditCardPayment;
 import heritage.joined_table.PayPalPayment;
 import heritage.single_table.CreditCardPaymentS;
 import heritage.single_table.PayPalPaymentS;
+import heritage.table_per_class.CreditCardPaymentD;
+import heritage.table_per_class.PayPalPaymentD;
+import heritage.table_per_class_no_abstract.CreditCardPaymentDnA;
+import heritage.table_per_class_no_abstract.PayPalPaymentDnA;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -41,6 +45,7 @@ public class Main {
 
             // ******************* exemple single table
 
+        /*
             CreditCardPaymentS creditCardPayment = new CreditCardPaymentS();
             creditCardPayment.setCardNumber("123456789");
             creditCardPayment.setAmount(2000.0);
@@ -56,6 +61,43 @@ public class Main {
             session.save(payPalPayment);
 
             tx.commit();
+        */
+            // ********************** exemple TABLE PER CLASS
+
+         /*
+            CreditCardPaymentD creditCardPayment = new CreditCardPaymentD();
+            creditCardPayment.setCardNumber("123456789");
+            creditCardPayment.setAmount(2000.0);
+            creditCardPayment.setPaymentDate(new Date());
+            creditCardPayment.setExpirationDate("12/2025");
+
+            PayPalPaymentD payPalPayment = new PayPalPaymentD();
+            payPalPayment.setAccountNumber("125874");
+            payPalPayment.setAmount(3000.0);
+            payPalPayment.setPaymentDate(new Date());
+
+            session.save(creditCardPayment);
+            session.save(payPalPayment);
+
+            tx.commit();
+           */
+
+            CreditCardPaymentDnA creditCardPayment = new CreditCardPaymentDnA();
+            creditCardPayment.setCardNumber("123456789");
+            creditCardPayment.setAmount(2000.0);
+            creditCardPayment.setPaymentDate(new Date());
+            creditCardPayment.setExpirationDate("12/2025");
+
+            PayPalPaymentDnA payPalPayment = new PayPalPaymentDnA();
+            payPalPayment.setAccountNumber("125874");
+            payPalPayment.setAmount(3000.0);
+            payPalPayment.setPaymentDate(new Date());
+
+            session.save(creditCardPayment);
+            session.save(payPalPayment);
+
+            tx.commit();
+
 
         } catch (Exception ex) {
 
