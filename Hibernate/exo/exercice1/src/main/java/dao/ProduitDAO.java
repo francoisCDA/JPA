@@ -163,10 +163,13 @@ public class ProduitDAO implements DAO<Produit>{
         Query<Produit> query = session.createQuery("delete Produit where marque = :marque ");
         query.setParameter("marque",trade);
 
+        query.executeUpdate();
+
         session.getTransaction().commit();
         session.close();
 
     }
+
 
     public List<String> getTradeNames(){
         Session session = factory.openSession();
@@ -174,6 +177,24 @@ public class ProduitDAO implements DAO<Produit>{
 
         Query<String> query = session.createQuery("select distinct marque from Produit");
         List<String> ret = query.list();
+
+        session.getTransaction().commit();
+        session.close();
+
+        return ret;
+
+    }
+
+
+    public List<Produit> getPrdctFromTrade(String trade) {
+
+        Session session = factory.openSession();
+        session.beginTransaction();
+
+        Query<Produit> query = session.createQuery("from Produit where marque = :marque");
+        query.setParameter("marque", trade);
+
+        List<Produit> ret = query.list();
 
         session.getTransaction().commit();
         session.close();

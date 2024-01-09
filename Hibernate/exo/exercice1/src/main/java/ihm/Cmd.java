@@ -45,7 +45,6 @@ public class Cmd {
 
         Double prixMin = UtilIHM.inputPrix("Prix minimum");
 
-
         List<Produit> produits = produitService.getPrdctPriceOver(prixMin);
 
         for (Produit p:produits) {
@@ -72,12 +71,10 @@ public class Cmd {
 
     }
 
-
-
     public static void catProduit() {
 
         try {
-            Long idProduit = UtilIHM.inputLong("Indiquer l'id du produit ");
+            Long idProduit = UtilIHM.inputLong("Indiquer l'id du produit");
             catProduit(idProduit);
         } catch (Exception e) {
             UtilIHM.consoleError(e.getMessage());
@@ -103,7 +100,6 @@ public class Cmd {
 
     }
 
-
     public static void updProduit(){
         try {
             Long idProduit = UtilIHM.inputLong("ID du produit à editer");
@@ -113,7 +109,6 @@ public class Cmd {
         }
 
     }
-
 
     public static void updProduit(Long id) {
 
@@ -160,6 +155,9 @@ public class Cmd {
 
 
     public static void  rmProduit() {
+
+        lsProduit();
+
         try {
             Long idProduit = UtilIHM.inputLong("ID du produit à supprimer (O annuler)");
             rmProduit(idProduit);
@@ -183,16 +181,13 @@ public class Cmd {
         }
 
         String choix = UtilIHM.inputText("Saisir une marque");
-
+        Double prix = 0.0 ;
 
         if (tradesNames.contains(choix)){
-            TODO
+            prix = produitService.getPriceFromTrade(choix);
         }
 
-
-
-
-
+        UtilIHM.consoleConfirm("Valeur total des produits de la marque " + choix + " = " + prix );
 
     }
 

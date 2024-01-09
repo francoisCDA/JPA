@@ -33,6 +33,7 @@ public class ProduitService {
     public Produit get(Long id) { return produitDAO.get(id);}
 
     public void update(Produit produit) { produitDAO.update(produit);}
+
     public void del(Long id) {produitDAO.remove(id);}
 
     public List<Produit> getBetweenDates(LocalDate start,LocalDate end){
@@ -63,9 +64,17 @@ public class ProduitService {
         return produitDAO.getTradeNames();
     }
 
+    public Double getPriceFromTrade(String marque) {
 
+        List<Produit> produits = produitDAO.getPrdctFromTrade(marque);
+        Double ret = 0.0;
 
+        if (!produits.isEmpty()){
+            for (Produit p:produits){
+                ret += p.getPrix() * p.getStock();
+            }
+        }
 
-
-
+        return ret;
+    }
 }

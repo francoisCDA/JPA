@@ -1,3 +1,4 @@
+import ihm.Autoexec;
 import ihm.Cmd;
 import services.SessionFactoryService;
 
@@ -13,9 +14,10 @@ public class Main {
 
        // Cmd.updProduit();
 
-        Cmd.getTradeStockValue();
+     //   Cmd.getTradeStockValue();
 
-        SessionFactoryService.close();
+        Autoexec.bat();
+
     }
 
 }
