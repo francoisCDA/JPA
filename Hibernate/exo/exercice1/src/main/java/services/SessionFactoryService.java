@@ -26,5 +26,10 @@ public class SessionFactoryService {
         return instance.sessionFactory;
     }
 
+    public static void close() {
+        instance.sessionFactory.close();
+        instance = null;
+    }
+
 
 }

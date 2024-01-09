@@ -4,6 +4,7 @@ import dao.ProduitDAO;
 import models.Produit;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProduitService {
@@ -29,10 +30,40 @@ public class ProduitService {
 
     public List<Produit> getAll() { return produitDAO.getAll();}
 
-    public Produit get(Long id ) { return produitDAO.get(id);}
+    public Produit get(Long id) { return produitDAO.get(id);}
 
     public void update(Produit produit) { produitDAO.update(produit);}
     public void del(Long id) {produitDAO.remove(id);}
+
+    public List<Produit> getBetweenDates(LocalDate start,LocalDate end){
+        if (start.isBefore(end)) {
+            return produitDAO.betweenDates(start, end);
+        } else {
+            return null;
+        }
+    }
+
+    public List<Produit> getPrdctPriceOver(Double prixMin) {
+        if (prixMin < 0.0 ) { prixMin = 0.0 ;}
+
+        return produitDAO.getPrdctPriceOver(prixMin);
+    }
+
+    public List<Produit> getPrdctFilterByStock(int stock){
+        if (stock < 0 ) { return new ArrayList<Produit>(); }
+
+        return produitDAO.getPrdctFilterByStock(stock);
+    }
+
+    public List<Produit> getPrdctFilterByTrade(String trade) {
+        return produitDAO.getPrdctFilterByMarque(trade);
+    }
+
+    public List<String> getTradeNames() {
+        return produitDAO.getTradeNames();
+    }
+
+
 
 
 

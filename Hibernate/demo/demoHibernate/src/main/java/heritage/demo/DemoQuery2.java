@@ -41,6 +41,7 @@ public class DemoQuery2 {
             System.out.println("les roberts : " + p);
         }
 
+        
 
 
         session.getTransaction().commit();
