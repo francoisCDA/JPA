@@ -2,20 +2,14 @@ package dao;
 
 import models.Produit;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
-import services.SessionFactoryService;
+
 
 import java.time.LocalDate;
 import java.util.List;
 
-public class ProduitDAO implements DAO<Produit>{
+public class ProduitDAO extends BaseDAO implements DAO<Produit>{
 
-    private SessionFactory factory;
-
-    public ProduitDAO() {
-        factory = SessionFactoryService.get();
-    }
 
     @Override
     public void create(Produit produit) {
@@ -31,7 +25,7 @@ public class ProduitDAO implements DAO<Produit>{
 
         Produit ret = session.get(Produit.class,id);
 
-        session.getTransaction().commit();
+
         session.close();
 
         return ret;

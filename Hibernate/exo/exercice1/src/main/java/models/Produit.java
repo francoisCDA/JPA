@@ -2,6 +2,7 @@ package models;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 public class Produit {
@@ -22,6 +23,13 @@ public class Produit {
     private double prix;
 
     private int stock;
+
+
+    @OneToMany(mappedBy = "produit", cascade = CascadeType.ALL)
+    private List<Image> images;
+
+    @OneToMany(mappedBy = "produit", cascade = CascadeType.ALL)
+    private List<Commentaire> avis;
 
 
 
@@ -76,11 +84,26 @@ public class Produit {
     @Override
     public String toString() {
         return "Produit " +
-                "id :" + id +
-                ", marque='" + marque + '\'' +
-                ", dateAchat=" + dateAchat +
-                ", prix=" + prix +
-                ", stock=" + stock +
+                "id : " + id +
+                ", marque : '" + marque + '\'' +
+                ", réf" + reference +
                 '.';
     }
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
+
+    public List<Commentaire> getAvis() {
+        return avis;
+    }
+
+    public void setAvis(List<Commentaire> avis) {
+        this.avis = avis;
+    }
+
 }

@@ -7,11 +7,9 @@
 
     <!-- a SessionFactory instance listed as /jndi/name -->
     <session-factory>
-        <mapping class="models.Produit"/>
-        <mapping class="models.Image"/>
-        <mapping class="models.Commentaire"/>
-        <mapping class="models.Commande"/>
-        <mapping class="models.Adresse"/>
+
+
+
     </session-factory>
 
 </hibernate-configuration>

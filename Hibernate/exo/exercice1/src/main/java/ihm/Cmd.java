@@ -1,7 +1,12 @@
 package ihm;
 
 import jdk.jshell.execution.Util;
+import models.Commande;
+import models.Commentaire;
+import models.Image;
 import models.Produit;
+import services.CommentaireService;
+import services.ImageService;
 import services.ProduitService;
 
 import java.time.LocalDate;
@@ -10,6 +15,8 @@ import java.util.List;
 public class Cmd {
 
     private static final ProduitService produitService = new ProduitService();
+    private static final ImageService imageService = new ImageService();
+    private static final CommentaireService commentaireService = new CommentaireService();
 
     public static void lsProduit(){
         List<Produit> produits = produitService.getAll();
@@ -54,7 +61,6 @@ public class Cmd {
     }
 
 
-
     public static void mkProduit(){
 
         String mark = UtilIHM.inputText("Marque du produit");
@@ -85,7 +91,37 @@ public class Cmd {
 
     public static void catProduit(Long id) {
 
-        UtilIHM.H3(produitService.get(id).toString());
+        Produit p = produitService.get(id);
+
+        UtilIHM.H3("Détail du produit");
+        UtilIHM.consoleLi("id : " + p.getId());
+        UtilIHM.consoleLi("Marque : " + p.getMarque());
+        UtilIHM.consoleLi("Référénce : " + p.getReference());
+        UtilIHM.consoleLi("Prix : " + UtilIHM.monetaireFormat( p.getPrix()) + "€" );
+        UtilIHM.consoleLi("Date d'achat : " + p.getDateAchat());
+        UtilIHM.consoleLi("Stock : " + p.getStock());
+
+        List<Image> images = imageService.getByProdctId(p.getId());
+
+        if (images != null && !images.isEmpty()) {
+            UtilIHM.consoleConfirm(" --- Liste des images ---");
+            for (Image img: images) {
+                UtilIHM.consoleLi(img.toString());
+            }
+        } else {
+            UtilIHM.consoleConfirm("Aucune image");
+        }
+
+        List<Commentaire> avis = commentaireService.getByProdctId(p.getId());
+
+        if (avis != null && !avis.isEmpty()) {
+            UtilIHM.consoleConfirm(" --- Liste des commentaires ---");
+            for (Commentaire com: avis) {
+                UtilIHM.consoleLi(com.toString());
+            }
+        } else {
+            UtilIHM.consoleConfirm("Aucun avis");
+        }
 
     }
 
@@ -122,6 +158,9 @@ public class Cmd {
         UtilIHM.consoleLi("date - modifier la date d'achat '" + produit.getDateAchat() + '\'');
         UtilIHM.consoleLi("prix - modifier le prix '" + produit.getPrix() + "€'");
         UtilIHM.consoleLi("stock - modifier le stock '" + produit.getStock() + '\'');
+        UtilIHM.consoleLi("com - editer les commentaires du produit");
+        UtilIHM.consoleLi("img - editer les images du produit");
+
 
         String choix = UtilIHM.inputText("$");
 
@@ -131,6 +170,15 @@ public class Cmd {
             case "date" -> produit.setDateAchat(UtilIHM.inputDate("Date d'achat"));
             case "prix" -> produit.setPrix(UtilIHM.inputPrix("Nouveau prix"));
             case "stock" -> produit.setStock(newStock());
+            case "com" -> {
+                editCommentaires(produit);
+                return;
+            }
+            case "img" -> {
+                editImages(produit);
+                return;
+            }
+
             default -> {
                 UtilIHM.consoleError("erreur de saisie");
                 return;
@@ -144,6 +192,150 @@ public class Cmd {
         System.out.println();
 
     }
+
+
+
+    private static void editImages(Produit produit) {
+
+        List<Image> images = imageService.getByProdctId(produit.getId());
+
+        if ( images!= null && !images.isEmpty()) {
+            UtilIHM.H3("Liste des images");
+            for (Image img:images) {
+                UtilIHM.consoleLi(img.getId() + " - " + img.toString());
+            }
+            System.out.println();
+            UtilIHM.consoleConfirm("séléctionner une image par son id");
+        } else {
+            UtilIHM.H3("Aucune image");
+        }
+
+        UtilIHM.consoleLi("add - ajouter une image");
+        UtilIHM.consoleLi("q - retour");
+
+        String choix = UtilIHM.inputText("editImages$");
+
+        if (choix.equals("add")){
+            String url = UtilIHM.inputText("URL de l'image");
+
+            imageService.create(url,produit);
+
+        } else {
+            try {
+                Long idImg = Long.parseLong(choix);
+                for (Image img:images){
+                    if(img.getId().equals(idImg)) {
+                        String newUrl = UtilIHM.inputText("Nouvel URL (laisser vide pour supprimer");
+                        if (newUrl.isEmpty()) {
+                            imageService.del(idImg);
+                        } else {
+                            img.setUrl(newUrl);
+                            imageService.update(img);
+                        }
+
+                        return;
+                    }
+                }
+
+            } catch (Exception ignored) {
+
+            }
+        }
+    }
+
+
+    private static void editCommentaires(Produit produit) {
+
+        if (produit.getAvis() != null && !produit.getAvis().isEmpty()) {
+            UtilIHM.H3("Liste des commentaires");
+            for (Commentaire com: produit.getAvis()) {
+                UtilIHM.consoleLi(com.getId() + " - " + com.toString());
+            }
+            System.out.println();
+            UtilIHM.consoleConfirm("sélectionner un commenaitre par son id");
+
+        } else {
+            UtilIHM.consoleConfirm("Aucun commentaire");
+
+        }
+
+        UtilIHM.consoleLi("add - ajouter un commentaire");
+
+        String choix = UtilIHM.inputText("editCommmentaire$");
+
+        if (choix.equals("add")) {
+            String avis = UtilIHM.inputText("commentaire");
+            LocalDate date = UtilIHM.inputDate("date du commentaire");
+            int note ;
+            try {
+                note = UtilIHM.inputNumber("note (0 à 5)");
+            } catch (Exception e) {
+                note = 0;
+            }
+
+            commentaireService.create(avis, date, note, produit);
+
+        } else {
+            try {
+                Long idCom = Long.parseLong(choix);
+                for (Commentaire com: produit.getAvis()) {
+                    if (com.getId().equals(idCom)) {
+                        editCommentaire(com);
+                        return;
+                    }
+                }
+                UtilIHM.consoleFail("id commentaire non valide");
+            } catch (Exception ignored) {
+                UtilIHM.consoleFail("saisie incorrecte");
+            }
+        }
+
+
+    }
+
+    private static void editCommentaire(Commentaire com) {
+
+        UtilIHM.H3("Editer un commentaire");
+        UtilIHM.consoleLi("rm - supprimer le commentaire");
+        UtilIHM.consoleLi("avis - modifier l'avis : " + com.getAvis());
+        UtilIHM.consoleLi("date - modifier la date : " + com.getDate());
+        UtilIHM.consoleLi("note - modifier la note : " + com.getNote() + "/5");
+        UtilIHM.consoleLi("q - quit");
+
+        String cmd = UtilIHM.inputText("editeCommentaire$");
+
+        switch (cmd) {
+            case "q" -> {return;}
+            case "rm" -> {
+                commentaireService.del(com.getId());
+                return;
+            }
+            case "avis" -> com.setAvis(UtilIHM.inputText("nouvel avis"));
+            case "date" -> com.setDate(UtilIHM.inputDate("modifier la date"));
+            case "note" -> com.setNote(getNote("nouvelle note"));
+            default -> {
+                UtilIHM.consoleFail("commande inconnue");
+                return;
+            }
+        }
+
+        commentaireService.update(com);
+
+    }
+
+    private static int getNote(String label) {
+
+        try {
+            int note = UtilIHM.inputNumber(label);
+            if (note < 0 ) return 0;
+            if (note > 5 ) return 5;
+            return note;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+
 
     private static int newStock() {
 

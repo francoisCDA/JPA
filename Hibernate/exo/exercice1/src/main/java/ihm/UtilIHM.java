@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -223,6 +224,20 @@ public class UtilIHM {
         return ret.toArray(new String[0]);
     }
 
+    public static <T> void printLs(List<T> obj)  {
+
+        if (obj != null && obj.size() > 0) {
+            for (T t:obj) {
+                consoleLi(t.toString());
+            }
+        }
+
+
+    }
+
+    public static void closeScanner() {
+        scan.close();
+    }
 
 
 }

@@ -25,6 +25,8 @@
         <mapping class="heritage.table_per_class_no_abstract.PayPalPaymentDnA"/>
 
         <mapping class="heritage.demo.model.Personne"/>
+        <mapping class="heritage.demo.composeKey.Employee"/>
+        <mapping class="heritage.demo.embedded.Agence"/>
 
     </session-factory>
 
