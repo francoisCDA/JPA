@@ -21,30 +21,38 @@ public class ProduitDAO extends BaseDAO implements DAO<Produit>{
     @Override
     public Produit get(Long id) {
         Session session = factory.openSession();
-        session.beginTransaction();
+      //  session.beginTransaction();
 
-        Produit ret = session.get(Produit.class,id);
+        try {
+            Produit ret = session.get(Produit.class,id);
+            return ret;
+        } catch (Exception ignored) {
+            return null;
+        } finally {
+            session.close();
+        }
 
-
-        session.close();
-
-        return ret;
     }
 
     @Override
     public List<Produit> getAll() {
         Session session = factory.openSession();
-        session.beginTransaction();
+       // session.beginTransaction();
+
+        try {
+            Query<Produit> produitsQuery = session.createQuery("from Produit ");
+
+            List<Produit> ret = produitsQuery.list();
+
+            return ret;
+
+        } catch (Exception ignored){
+            return null;
+        } finally {
+            session.close();
+        }
 
 
-        Query<Produit> produitsQuery = session.createQuery("from Produit ");
-
-        List<Produit> ret = produitsQuery.list();
-
-        session.getTransaction().commit();
-        session.close();
-
-        return ret;
     }
 
     @Override
@@ -195,6 +203,25 @@ public class ProduitDAO extends BaseDAO implements DAO<Produit>{
 
         return ret;
 
+    }
+
+    public List<Produit> getByProdctScore(int minScore){
+
+        session = factory.openSession();
+        session.beginTransaction();
+
+        try {
+            String sql = "select p from Produit p join p.avis a group by p having avg(a.note) >= :score";
+            Query<Produit> query = session.createQuery(sql, Produit.class);
+            query.setParameter("score",minScore);
+
+            return query.getResultList();
+
+        } catch (Exception e) {
+            return null;
+        } finally {
+            session.close();
+        }
     }
 
 

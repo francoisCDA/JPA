@@ -64,9 +64,9 @@ public class Commentaire {
 
     @Override
     public String toString() {
-        return   avis +
-                ", " + date +
-                ", " + note +
+        return  '\'' + avis +
+                "', le " + date +
+                ", note " + note +
                 "/5.";
     }
 }

@@ -32,9 +32,7 @@ public class Autoexec {
                 case "avg" -> Cmd.getAVGPrice();
                 case "lsm" -> Cmd.getPrdctFromTrade();
                 case "rmm" -> Cmd.rmTrade();
-                case "" -> {
-
-                }
+                case "" -> {}
                 default -> UtilIHM.consoleFail("commande non trouvée - tapper 'help' pour afficher la liste des commandes disponibles");
             }
         }

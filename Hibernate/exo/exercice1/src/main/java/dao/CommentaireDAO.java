@@ -1,7 +1,10 @@
 package dao;
 
 import models.Commentaire;
+import models.Image;
+import models.Produit;
 import org.hibernate.Session;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 
 import java.util.List;
@@ -70,4 +73,29 @@ public class CommentaireDAO extends BaseDAO implements DAO<Commentaire> {
         }
 
     }
+
+
+    public List<Commentaire> getByProdctId(Long idProdct){
+
+        session = factory.openSession();
+        session.beginTransaction();
+
+        try {
+            String sql = "select * from commentaire where product_id = :id";
+            NativeQuery<Commentaire> query = session.createNativeQuery(sql, Commentaire.class);
+            query.setParameter("id",idProdct);
+
+            return query.getResultList();
+
+        } catch (Exception e) {
+            return null;
+        } finally {
+            session.close();
+        }
+
+
+    }
+
+
+
 }

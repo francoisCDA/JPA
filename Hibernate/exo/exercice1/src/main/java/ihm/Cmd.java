@@ -21,7 +21,7 @@ public class Cmd {
     public static void lsProduit(){
         List<Produit> produits = produitService.getAll();
 
-        if (produits.isEmpty()) {
+        if (produits == null || produits.isEmpty()) {
             UtilIHM.consoleConfirm("Aucun produit");
         } else {
             UtilIHM.H3("Liste des produits");
@@ -64,15 +64,10 @@ public class Cmd {
     public static void mkProduit(){
 
         String mark = UtilIHM.inputText("Marque du produit");
-
         String ref = UtilIHM.inputText("Référence du produit");
-
         LocalDate date = UtilIHM.inputDate("Date d'achat");
-
         Double prix = UtilIHM.inputPrix("prix du produit");
-
         int stock = newStock();
-
         produitService.create(mark,ref,date,prix,stock);
 
     }
@@ -80,7 +75,7 @@ public class Cmd {
     public static void catProduit() {
 
         try {
-            Long idProduit = UtilIHM.inputLong("Indiquer l'id du produit (O pour annuler");
+            Long idProduit = UtilIHM.inputLong("Indiquer l'id du produit (O pour annuler)");
             if (idProduit == 0 ) {return;}
             catProduit(idProduit);
         } catch (Exception e) {
@@ -162,7 +157,7 @@ public class Cmd {
         UtilIHM.consoleLi("img - editer les images du produit");
 
 
-        String choix = UtilIHM.inputText("$");
+        String choix = UtilIHM.inputText("upd$");
 
         switch (choix) {
             case "marque" -> produit.setMarque(UtilIHM.inputText("Marque du produit"));
@@ -261,7 +256,7 @@ public class Cmd {
 
         UtilIHM.consoleLi("add - ajouter un commentaire");
 
-        String choix = UtilIHM.inputText("editCommmentaire$");
+        String choix = UtilIHM.inputText("upd/commmentaries$");
 
         if (choix.equals("add")) {
             String avis = UtilIHM.inputText("commentaire");
@@ -302,7 +297,7 @@ public class Cmd {
         UtilIHM.consoleLi("note - modifier la note : " + com.getNote() + "/5");
         UtilIHM.consoleLi("q - quit");
 
-        String cmd = UtilIHM.inputText("editeCommentaire$");
+        String cmd = UtilIHM.inputText("upd/commentaries/commentary$");
 
         switch (cmd) {
             case "q" -> {return;}
@@ -438,6 +433,31 @@ public class Cmd {
         }
 
         return null;
+
+    }
+
+    private static void printPrdctWithMinScore() {
+
+        try {
+            int minScore = UtilIHM.inputNumber("moyenne minimum") ;
+
+            if (minScore < 0 || minScore > 5) {
+                UtilIHM.consoleFail("score invalide");
+                return;
+            }
+
+            List<Produit> produits = produitService.getPrdctByMinScore(minScore);
+
+            if (produits != null && !produits.isEmpty()) {
+                UtilIHM.H3("Produit ayant un score moyen supérieur ou égale à " + minScore);
+                UtilIHM.printLs(produits);
+            } else {
+                UtilIHM.consoleFail("Aucun produit trouvé");
+            }
+
+        } catch (Exception e) {
+            UtilIHM.consoleError("Saisie invalide");
+        }
 
     }
 

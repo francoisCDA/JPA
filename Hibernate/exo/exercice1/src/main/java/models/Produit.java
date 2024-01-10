@@ -2,9 +2,11 @@ package models;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name="produit")
 public class Produit {
 
 
@@ -24,13 +26,22 @@ public class Produit {
 
     private int stock;
 
-
     @OneToMany(mappedBy = "produit", cascade = CascadeType.ALL)
     private List<Image> images;
 
-    @OneToMany(mappedBy = "produit", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "produit", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Commentaire> avis;
 
+    @ManyToMany(mappedBy = "produits")
+    private List<Commande> commandes;
+
+
+
+
+    public Produit() {
+            images = new ArrayList<>();
+            avis = new ArrayList<>();
+    }
 
 
     public void setId(Long id) {

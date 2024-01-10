@@ -5,6 +5,7 @@ import models.Commentaire;
 import models.Produit;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class CommentaireService {
 
@@ -33,6 +34,10 @@ public class CommentaireService {
 
     public void del(Long id) {
         commentaireDAO.remove(id);
+    }
+
+    public List<Commentaire> getByProdctId(Long idProdct){
+        return commentaireDAO.getByProdctId(idProdct);
     }
 
 

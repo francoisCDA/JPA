@@ -86,4 +86,8 @@ public class ProduitService {
         produitDAO.rmPrdctByMarque(trade);
     }
 
+    public List<Produit> getPrdctByMinScore(int scoreMin) {
+        return produitDAO.getByProdctScore(scoreMin);
+    }
+
 }
