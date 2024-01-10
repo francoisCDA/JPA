@@ -1,5 +1,6 @@
 package ihm;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -70,10 +71,10 @@ public class UtilIHM {
 
         while (!valide) {
 
-            input = inputText(label);
+            input = inputText(label + " (YYYY-MM-JJ)");
 
             try {
-                ret = LocalDate.parse(input + " (YYYY-MM-JJ)"); // format date attendu YYYY-MM-JJ
+                ret = LocalDate.parse(input); // format date attendu YYYY-MM-JJ
 
                 valide = true;
 
@@ -107,6 +108,11 @@ public class UtilIHM {
         }
 
         return ret;
+    }
+
+    public static String monetaireFormat(Double prix) {
+        DecimalFormat df = new DecimalFormat("0.00");
+        return df.format(prix);
     }
 
 

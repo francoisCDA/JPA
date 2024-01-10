@@ -77,4 +77,13 @@ public class ProduitService {
 
         return ret;
     }
+
+    public Double getAVGPrice(){
+        return produitDAO.getAVGPrice();
+    }
+
+    public void rmTrade(String trade) {
+        produitDAO.rmPrdctByMarque(trade);
+    }
+
 }

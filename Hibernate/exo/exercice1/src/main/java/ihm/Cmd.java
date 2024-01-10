@@ -74,7 +74,8 @@ public class Cmd {
     public static void catProduit() {
 
         try {
-            Long idProduit = UtilIHM.inputLong("Indiquer l'id du produit");
+            Long idProduit = UtilIHM.inputLong("Indiquer l'id du produit (O pour annuler");
+            if (idProduit == 0 ) {return;}
             catProduit(idProduit);
         } catch (Exception e) {
             UtilIHM.consoleError(e.getMessage());
@@ -102,7 +103,8 @@ public class Cmd {
 
     public static void updProduit(){
         try {
-            Long idProduit = UtilIHM.inputLong("ID du produit à editer");
+            Long idProduit = UtilIHM.inputLong("ID du produit à editer (0 pour annuler)");
+            if (idProduit == 0 ) {return;}
             updProduit(idProduit);
         } catch (Exception e) {
             UtilIHM.consoleError(e.getMessage());
@@ -115,11 +117,11 @@ public class Cmd {
         Produit produit = produitService.get(id);
 
         UtilIHM.H2("Mise à jour du produit");
-        UtilIHM.consoleLi("marque - modifier la marque");
-        UtilIHM.consoleLi("ref - modifier la référence produit");
-        UtilIHM.consoleLi("date - modifier la date d'achat");
-        UtilIHM.consoleLi("prix - modifier le prix");
-        UtilIHM.consoleLi("stock - modifier le stock");
+        UtilIHM.consoleLi("marque - modifier '" + produit.getMarque() + '\'');
+        UtilIHM.consoleLi("ref - modifier la référence '"+ produit.getReference() + '\'');
+        UtilIHM.consoleLi("date - modifier la date d'achat '" + produit.getDateAchat() + '\'');
+        UtilIHM.consoleLi("prix - modifier le prix '" + produit.getPrix() + "€'");
+        UtilIHM.consoleLi("stock - modifier le stock '" + produit.getStock() + '\'');
 
         String choix = UtilIHM.inputText("$");
 
@@ -136,6 +138,10 @@ public class Cmd {
         }
 
         produitService.update(produit);
+
+        UtilIHM.consoleConfirm("Produit mis à jour");
+        catProduit(produit.getId());
+        System.out.println();
 
     }
 
@@ -160,6 +166,7 @@ public class Cmd {
 
         try {
             Long idProduit = UtilIHM.inputLong("ID du produit à supprimer (O annuler)");
+            if (idProduit == 0 ) {return;}
             rmProduit(idProduit);
         } catch (Exception e) {
             UtilIHM.consoleError(e.getMessage());
@@ -173,6 +180,58 @@ public class Cmd {
 
     public static void getTradeStockValue() {
 
+        String tradeName = getTradeName();
+
+        Double prix = 0.0 ;
+
+        if (tradeName != null){
+            prix = produitService.getPriceFromTrade(tradeName);
+        }
+
+        UtilIHM.consoleConfirm("Valeur total des produits de la marque " + tradeName + " = " + UtilIHM.monetaireFormat(prix) + "€" );
+
+    }
+
+    public static void getAVGPrice(){
+
+        Double avg =  produitService.getAVGPrice();
+
+        UtilIHM.consoleConfirm("Le prix moyen des articles est de : " + UtilIHM.monetaireFormat(avg) + "€");
+
+    }
+
+    public static void getPrdctFromTrade(){
+
+        String tradeName = getTradeName();
+
+        if (tradeName != null){
+            List<Produit> produits = produitService.getPrdctFilterByTrade(tradeName);
+
+            if (produits != null) {
+                UtilIHM.H3("liste des produits de la marque " + tradeName);
+                for (Produit p: produits) {
+                    UtilIHM.consoleLi(p.toString());
+                }
+            } else {
+                UtilIHM.consoleFail("Marque non trouvée");
+            }
+
+        }
+    }
+
+    public static void rmTrade() {
+
+        String tradeName = getTradeName();
+
+        if (tradeName != null ) {
+            produitService.rmTrade(tradeName);
+        }
+
+    }
+
+
+    private static String getTradeName(){
+
         List<String> tradesNames = produitService.getTradeNames();
 
         UtilIHM.H3("Liste des Marque");
@@ -181,13 +240,12 @@ public class Cmd {
         }
 
         String choix = UtilIHM.inputText("Saisir une marque");
-        Double prix = 0.0 ;
 
         if (tradesNames.contains(choix)){
-            prix = produitService.getPriceFromTrade(choix);
+            return choix;
         }
 
-        UtilIHM.consoleConfirm("Valeur total des produits de la marque " + choix + " = " + prix );
+        return null;
 
     }
 
