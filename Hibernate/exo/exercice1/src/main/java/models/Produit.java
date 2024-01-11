@@ -36,8 +36,6 @@ public class Produit {
     private List<Commande> commandes;
 
 
-
-
     public Produit() {
             images = new ArrayList<>();
             avis = new ArrayList<>();
