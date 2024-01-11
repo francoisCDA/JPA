@@ -16,12 +16,8 @@ public class Adresse {
     @Column(name = "code_postal")
     private String codePostal;
 
-    @OneToOne(mappedBy = "adresse")
+    @OneToOne
     private Commande commande;
-
-
-
-
 
 
 
