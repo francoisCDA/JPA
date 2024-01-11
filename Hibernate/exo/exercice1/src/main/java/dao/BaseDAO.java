@@ -16,4 +16,8 @@ public abstract class BaseDAO {
         factory = SessionFactoryService.get();
     }
 
+
+
+
+
 }

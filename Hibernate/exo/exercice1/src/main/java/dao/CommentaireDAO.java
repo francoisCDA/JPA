@@ -52,8 +52,6 @@ public class CommentaireDAO extends BaseDAO implements DAO<Commentaire> {
         } finally {
             session.close();
         }
-
-
     }
 
     @Override
@@ -71,7 +69,6 @@ public class CommentaireDAO extends BaseDAO implements DAO<Commentaire> {
         }finally {
             session.close();
         }
-
     }
 
 
@@ -92,8 +89,6 @@ public class CommentaireDAO extends BaseDAO implements DAO<Commentaire> {
         } finally {
             session.close();
         }
-
-
     }
 
 
