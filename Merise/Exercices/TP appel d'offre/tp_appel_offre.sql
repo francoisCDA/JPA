@@ -94,6 +94,8 @@ select DISTINCT num_appel_offre, count(num_produit) from
 /************************************
 5 - Trouver les produits qui n'ont pas encore été inclus dans un contrat.
 *****************************************/
+
+
 /************************************
 6 - Afficher les contrats signés par chaque fournisseur avec la date de signature.
 *****************************************/

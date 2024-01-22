@@ -9,7 +9,6 @@ USE  modelisation_examen;
 /****************************
 	Création des tables
 *****************************/
-
 CREATE TABLE examen(
    id_examen INT AUTO_INCREMENT,
    nom_examen VARCHAR(50),
@@ -24,12 +23,6 @@ CREATE TABLE epreuve(
    id_examen INT NOT NULL,
    PRIMARY KEY(id_epreuve),
    FOREIGN KEY(id_examen) REFERENCES examen(id_examen)
-);
-
-
-CREATE TABLE bordereau(
-   id_bordereau INT AUTO_INCREMENT,
-   PRIMARY KEY(id_bordereau)
 );
 
 CREATE TABLE ville_de_france(
@@ -68,7 +61,7 @@ CREATE TABLE enseignant(
    nom_ens VARCHAR(50),
    telephone_ens VARCHAR(10),
    adresse_ens VARCHAR(200),
-   code_insee CHAR(5) NOT NULL,
+   code_insee CHAR(5),
    code_etablis CHAR(12) NOT NULL,
    PRIMARY KEY(numen),
    FOREIGN KEY(code_insee) REFERENCES ville_de_france(code_insee),
@@ -85,16 +78,10 @@ CREATE TABLE eleve(
    FOREIGN KEY(code_etablis) REFERENCES etablis_scolaire(code_etablis)
 );
 
-
-CREATE TABLE note(
-   id_note INT AUTO_INCREMENT,
-   note DECIMAL(4,2) CHECK(note > 0),
-   id_bordereau INT NOT NULL,
-   id_epreuve INT NOT NULL,
+CREATE TABLE bordereau(
+   id_bordereau INT AUTO_INCREMENT,
    id_eleve INT NOT NULL,
-   PRIMARY KEY(id_note),
-   FOREIGN KEY(id_bordereau) REFERENCES bordereau(id_bordereau),
-   FOREIGN KEY(id_epreuve) REFERENCES epreuve(id_epreuve),
+   PRIMARY KEY(id_bordereau),
    FOREIGN KEY(id_eleve) REFERENCES eleve(id_eleve)
 );
 
@@ -109,6 +96,17 @@ CREATE TABLE dossier_inscription(
    FOREIGN KEY(id_eleve) REFERENCES eleve(id_eleve)
 );
 
+CREATE TABLE note(
+   id_note INT AUTO_INCREMENT,
+   note DECIMAL(4,2) CHECK(note > 0),
+   id_bordereau INT NOT NULL,
+   id_epreuve INT NOT NULL,
+   id_eleve INT NOT NULL,
+   PRIMARY KEY(id_note),
+   FOREIGN KEY(id_bordereau) REFERENCES bordereau(id_bordereau),
+   FOREIGN KEY(id_epreuve) REFERENCES epreuve(id_epreuve),
+   FOREIGN KEY(id_eleve) REFERENCES eleve(id_eleve)
+);
 
 CREATE TABLE convocation(
    id_epreuve INT,
@@ -131,6 +129,7 @@ CREATE TABLE examination(
    FOREIGN KEY(id_bordereau) REFERENCES bordereau(id_bordereau),
    FOREIGN KEY(id_jury) REFERENCES jury(id_jury)
 );
+
 
 
 /**************************************** 
@@ -224,10 +223,11 @@ DELIMITER ;
 
 
 -- Appel des procédures pour insérer des données
-CALL InsertBordereau();
+-- CALL InsertBordereau();
 CALL InsertJury();
 
 
+-- DROP PROCEDURE InsertComRedac;
 
 DELIMITER //
 CREATE PROCEDURE InsertComRedac()
@@ -235,7 +235,8 @@ BEGIN
     DECLARE counter INT DEFAULT 0;
 
     WHILE counter < 20 DO
-        INSERT INTO com_redac (date_commi) VALUES (CURRENT_DATE() - 400 + INTERVAL FLOOR(RAND() * 30) DAY);
+        INSERT INTO com_redac (date_commi) VALUES (DATE_SUB(CURRENT_DATE(), INTERVAL 400 + FLOOR(RAND() * 30) DAY));
+
         SET counter = counter + 1;
     END WHILE;
 END //
@@ -303,6 +304,18 @@ VALUES
 ('Robin', 'Elsa', '2005-08-17', 'E008'),
 ('Garnier', 'Tom', '2005-10-22', 'E009'),
 ('Leroux', 'Jade', '2005-12-15', 'E010');
+
+INSERT INTO bordereau (id__eleve) VALUES
+(1),
+(2),
+(3),
+(8),
+(9),
+(10),
+(11),
+(8),
+
+
 
 
 

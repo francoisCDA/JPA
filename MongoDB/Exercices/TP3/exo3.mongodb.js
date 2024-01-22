@@ -27,5 +27,5 @@ db.book.distinct("publisher");
 
 //q6
 db.runCommand({distinct:"book",key:"authors"});
-db.book.distinct(authors);
+db.book.distinct("authors");
 

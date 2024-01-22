@@ -1,0 +1,4 @@
+{
+    "mdb.confirmDeleteDocument": true,
+    "mdb.confirmRunAll": false
+}
